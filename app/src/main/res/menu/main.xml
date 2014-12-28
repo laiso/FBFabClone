@@ -3,6 +3,21 @@
     tools:context=".MainActivity" >
     <item android:id="@+id/action_execute"
         android:title="@string/action_execute"
-        android:orderInCategory="100"
+        android:orderInCategory="0"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_remove"
+        android:title="@string/action_delete"
+        android:orderInCategory="1"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_recent"
+        android:title="@string/action_recent"
+        android:orderInCategory="2"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_dump"
+        android:title="@string/action_dump"
+        android:orderInCategory="3"
         android:showAsAction="never" />
 </menu>

@@ -2,27 +2,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="48dp">
+    android:minHeight="48dp"
+    android:paddingBottom="8dp">
 
-
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_margin="8dp" />
 
     <TextView
+        android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignTop="@id/userImage"
+        android:layout_toEndOf="@id/userImage"
+        android:layout_toStartOf="@+id/when"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/count"
+        android:layout_alignStart="@id/userName"
+        android:layout_below="@id/userName"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/favicon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignStart="@id/userName"
+        android:layout_below="@id/comment"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/pageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/favicon"
+        android:layout_toEndOf="@id/favicon"
+        android:layout_marginEnd="8dp"
+        android:textColor="#ff7274ff" />
+
+    <TextView
+        android:id="@+id/when"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp" />
 </RelativeLayout>

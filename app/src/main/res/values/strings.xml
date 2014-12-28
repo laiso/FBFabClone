@@ -4,5 +4,10 @@
     <string name="app_name">HBFavClone</string>
     <string name="action_settings">Settings</string>
     <string name="action_execute">Execute</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_recent">Recent</string>
+    <string name="action_dump">Dump</string>
+    <string name="title_activity_recent">RecentActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
