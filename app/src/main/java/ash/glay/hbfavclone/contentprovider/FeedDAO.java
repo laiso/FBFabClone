@@ -13,6 +13,8 @@ import java.util.List;
 import ash.glay.hbfavclone.model.FeedItem;
 import ash.glay.hbfavclone.model.User;
 
+import static ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider.*;
+
 /**
  * FeedのデータベースへアクセスするためのSingletonクラス
  */
@@ -54,7 +56,7 @@ public class FeedDAO {
      * @param contentResolver
      */
     public void removeAllFeeds(ContentResolver contentResolver) {
-        contentResolver.delete(HBFavFeedContentProvider.CONTENT_URI, null, null);
+        contentResolver.delete(CONTENT_URI, null, null);
     }
 
     /**
@@ -67,21 +69,21 @@ public class FeedDAO {
         FeedItem feed = new FeedItem();
 
         try {
-            feed.title = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.TITLE_COLUMN));
-            feed.link = new URI(cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.LINK_COLUMN)));
-            feed.favicon_url = new URI(cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.FAVICON_URL_COLUMN)));
-            feed.comment = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.COMMENT_COLUMN));
-            feed.count = cursor.getInt(cursor.getColumnIndex(HBFavFeedContentProvider.COUNT_COLUMN));
-            feed.datetime = new Date(cursor.getInt(cursor.getColumnIndex(HBFavFeedContentProvider.DATETIME_COLUMN)));
-            feed.created_at = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.CREATE_AT_COLUMN));
-            feed.permalink = new URI(cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.PERMALINK_COLUMN)));
-            feed.description = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.DESCRIPTION_COLUMN));
-            final String thumbnailUrl = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.THUMBNAIL_URL_COLUMN));
+            feed.title = cursor.getString(cursor.getColumnIndex(TITLE_COLUMN));
+            feed.link = new URI(cursor.getString(cursor.getColumnIndex(LINK_COLUMN)));
+            feed.favicon_url = new URI(cursor.getString(cursor.getColumnIndex(FAVICON_URL_COLUMN)));
+            feed.comment = cursor.getString(cursor.getColumnIndex(COMMENT_COLUMN));
+            feed.count = cursor.getInt(cursor.getColumnIndex(COUNT_COLUMN));
+            feed.datetime = new Date(cursor.getInt(cursor.getColumnIndex(DATETIME_COLUMN)));
+            feed.created_at = cursor.getString(cursor.getColumnIndex(CREATE_AT_COLUMN));
+            feed.permalink = new URI(cursor.getString(cursor.getColumnIndex(PERMALINK_COLUMN)));
+            feed.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION_COLUMN));
+            final String thumbnailUrl = cursor.getString(cursor.getColumnIndex(THUMBNAIL_URL_COLUMN));
             if (!TextUtils.isEmpty(thumbnailUrl)) {
                 feed.thumbnail_url = new URI(thumbnailUrl);
             }
-            final String userName = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.USER_NAME_COLUMN));
-            final URI userImage = new URI(cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.USER_PROFILE_IMAGE_URL_COLUMN)));
+            final String userName = cursor.getString(cursor.getColumnIndex(USER_NAME_COLUMN));
+            final URI userImage = new URI(cursor.getString(cursor.getColumnIndex(USER_PROFILE_IMAGE_URL_COLUMN)));
             feed.user = new User(userName, userImage);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -98,21 +100,21 @@ public class FeedDAO {
      */
     private ContentValues convertFeedItem(FeedItem feed) {
         ContentValues cv = new ContentValues();
-        cv.put(HBFavFeedContentProvider.TITLE_COLUMN, feed.title);
-        cv.put(HBFavFeedContentProvider.LINK_COLUMN, feed.link.toString());
-        cv.put(HBFavFeedContentProvider.FAVICON_URL_COLUMN, feed.favicon_url.toString());
-        cv.put(HBFavFeedContentProvider.COMMENT_COLUMN, feed.comment);
-        cv.put(HBFavFeedContentProvider.COUNT_COLUMN, feed.count);
-        cv.put(HBFavFeedContentProvider.DATETIME_COLUMN, feed.datetime.getTime());
-        cv.put(HBFavFeedContentProvider.CREATE_AT_COLUMN, feed.created_at);
-        cv.put(HBFavFeedContentProvider.PERMALINK_COLUMN, feed.permalink.toString());
-        cv.put(HBFavFeedContentProvider.DESCRIPTION_COLUMN, feed.description);
+        cv.put(TITLE_COLUMN, feed.title);
+        cv.put(LINK_COLUMN, feed.link.toString());
+        cv.put(FAVICON_URL_COLUMN, feed.favicon_url.toString());
+        cv.put(COMMENT_COLUMN, feed.comment);
+        cv.put(COUNT_COLUMN, feed.count);
+        cv.put(DATETIME_COLUMN, feed.datetime.getTime());
+        cv.put(CREATE_AT_COLUMN, feed.created_at);
+        cv.put(PERMALINK_COLUMN, feed.permalink.toString());
+        cv.put(DESCRIPTION_COLUMN, feed.description);
         if (feed.thumbnail_url != null) {
-            cv.put(HBFavFeedContentProvider.THUMBNAIL_URL_COLUMN, feed.thumbnail_url.toString());
+            cv.put(THUMBNAIL_URL_COLUMN, feed.thumbnail_url.toString());
         }
-        cv.put(HBFavFeedContentProvider.USER_NAME_COLUMN, feed.user.name);
-        cv.put(HBFavFeedContentProvider.USER_PROFILE_IMAGE_URL_COLUMN, feed.user.profile_image_url.toString());
-        cv.put(HBFavFeedContentProvider.HASH_COLUMN, feed.hashCode());
+        cv.put(USER_NAME_COLUMN, feed.user.name);
+        cv.put(USER_PROFILE_IMAGE_URL_COLUMN, feed.user.profile_image_url.toString());
+        cv.put(HASH_COLUMN, feed.hashCode());
         return cv;
     }
 }
