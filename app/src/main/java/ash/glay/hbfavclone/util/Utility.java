@@ -9,9 +9,9 @@ import java.nio.channels.FileChannel;
 /**
  * ユーティリティメソッドを定義するクラス
  */
-public class Util {
+public class Utility {
 
-    private Util() {
+    private Utility() {
     }
 
     /**

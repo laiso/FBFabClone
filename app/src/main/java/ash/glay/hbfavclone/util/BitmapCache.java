@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.net;
+package ash.glay.hbfavclone.util;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;

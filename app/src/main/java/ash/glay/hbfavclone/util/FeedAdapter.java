@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.component;
+package ash.glay.hbfavclone.util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -16,8 +16,8 @@ import com.android.volley.toolbox.ImageLoader;
 
 import ash.glay.hbfavclone.Application;
 import ash.glay.hbfavclone.R;
+import ash.glay.hbfavclone.contentprovider.FeedDAO;
 import ash.glay.hbfavclone.model.FeedItem;
-import ash.glay.hbfavclone.net.BitmapCache;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 

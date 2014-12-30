@@ -18,14 +18,14 @@ import android.widget.ListView;
 
 import java.io.File;
 
-import ash.glay.hbfavclone.component.FeedAdapter;
-import ash.glay.hbfavclone.component.FeedDAO;
-import ash.glay.hbfavclone.constant.Constants;
+import ash.glay.hbfavclone.util.FeedAdapter;
+import ash.glay.hbfavclone.contentprovider.FeedDAO;
+import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.DatabaseHelper;
-import ash.glay.hbfavclone.service.StubAuthenticationService;
+import ash.glay.hbfavclone.auth.StubAuthenticationService;
 import ash.glay.hbfavclone.service.SyncAdapter;
-import ash.glay.hbfavclone.util.Util;
+import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -101,7 +101,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         else if (id == R.id.action_dump) {
             File db = getDatabasePath(DatabaseHelper.DATABASE_NAME);
             File dst = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + (DatabaseHelper.DATABASE_NAME));
-            Util.copyFile(db, dst);
+            Utility.copyFile(db, dst);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.component;
+package ash.glay.hbfavclone.contentprovider;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 
-import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.FeedItem;
 
 /**
@@ -29,19 +28,6 @@ public class FeedDAO {
      */
     public static FeedDAO getInstance() {
         return sInstance;
-    }
-
-    /**
-     * ContentProviderへフィードを追加します<br />
-     * バルクインサート実装に伴って廃止
-     *
-     * @param contentResolver
-     * @param feed            挿入するフィードアイテム
-     */
-    @Deprecated
-    public void addFeed(ContentResolver contentResolver, FeedItem feed) {
-        ContentValues cv = convertFeedItem(feed);
-        contentResolver.insert(HBFavFeedContentProvider.CONTENT_URI, cv);
     }
 
     /**

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ash.glay.hbfavclone.constant.Constants;
+import ash.glay.hbfavclone.util.Constants;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 

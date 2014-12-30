@@ -17,7 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import ash.glay.hbfavclone.constant.Constants;
+import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.model.FeedItem;
 
 /**

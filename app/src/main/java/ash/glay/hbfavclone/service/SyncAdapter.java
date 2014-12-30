@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
@@ -18,7 +19,8 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
-import ash.glay.hbfavclone.component.FeedDAO;
+import ash.glay.hbfavclone.auth.StubAuthenticationService;
+import ash.glay.hbfavclone.contentprovider.FeedDAO;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.FeedItem;
 import ash.glay.hbfavclone.net.HBFavFeedConnection;
@@ -37,13 +39,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // フェッチを実行する、結果が取得できなければリターン
         List<FeedItem> result = HBFavFeedConnection.execute("quesera2");
         if (result == null) {
+            syncResult.stats.numIoExceptions++;
             return;
         }
 
         try {
             // バルクインサートで保存
-            provider.bulkInsert(HBFavFeedContentProvider.CONTENT_URI, FeedDAO.getInstance().convertFromFeedList(result));
+            ContentValues[] values =  FeedDAO.getInstance().convertFromFeedList(result);
+            int count = provider.bulkInsert(HBFavFeedContentProvider.CONTENT_URI, values);
+            syncResult.stats.numInserts += count;
         } catch (RemoteException e) {
+            syncResult.databaseError = true;
             e.printStackTrace();
         }
         writeLog();

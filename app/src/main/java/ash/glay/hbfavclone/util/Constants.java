@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.constant;
+package ash.glay.hbfavclone.util;
 
 /**
  * Created by StraySheep on 2014/12/27.

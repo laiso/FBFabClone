@@ -1,12 +1,11 @@
-package ash.glay.hbfavclone.service;
+package ash.glay.hbfavclone.auth;
 
 import android.accounts.Account;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import ash.glay.hbfavclone.auth.StubAuthenticator;
-import ash.glay.hbfavclone.constant.Constants;
+import ash.glay.hbfavclone.util.Constants;
 
 /**
  * Authenticatorを提供するサービス
