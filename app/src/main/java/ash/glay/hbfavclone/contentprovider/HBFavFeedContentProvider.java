@@ -1,5 +1,6 @@
 package ash.glay.hbfavclone.contentprovider;
 
+import android.accounts.Account;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -13,11 +14,9 @@ import android.os.Bundle;
 
 import java.util.HashMap;
 
-import ash.glay.hbfavclone.auth.StubAuthenticationService;
 import ash.glay.hbfavclone.model.DatabaseHelper;
 
-import static ash.glay.hbfavclone.model.DatabaseHelper.COLUMN_ID;
-import static ash.glay.hbfavclone.model.DatabaseHelper.TABLE_NAME_FEED;
+import static ash.glay.hbfavclone.model.DatabaseHelper.*;
 
 public class HBFavFeedContentProvider extends ContentProvider {
 
@@ -133,10 +132,10 @@ public class HBFavFeedContentProvider extends ContentProvider {
     /**
      * SyncAdapterの更新を即座に実行します。
      */
-    public static void forceRefresh() {
+    public static void forceRefresh(Account account) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(StubAuthenticationService.getAccount(), AUTHORITY, bundle);
+        ContentResolver.requestSync(account, AUTHORITY, bundle);
     }
 }

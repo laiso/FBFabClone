@@ -53,7 +53,7 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        <service android:name=".auth.StubAuthenticationService">
+        <service android:name=".auth.HatenaAuthenticationService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

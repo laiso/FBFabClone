@@ -35,7 +35,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         // フェッチを実行する、結果が取得できなければリターン
         try {
-            List<FeedItem> result = HBFavFeedConnection.execute("quesera2");
+            List<FeedItem> result = HBFavFeedConnection.execute(account.name);
             // バルクインサートで保存
             ContentValues[] values = FeedDAO.getInstance().convertFromFeedList(result);
             int count = provider.bulkInsert(HBFavFeedContentProvider.CONTENT_URI, values);

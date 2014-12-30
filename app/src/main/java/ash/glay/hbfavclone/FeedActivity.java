@@ -1,11 +1,9 @@
 package ash.glay.hbfavclone;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -18,7 +16,6 @@ import android.widget.ListView;
 
 import java.io.File;
 
-import ash.glay.hbfavclone.auth.StubAuthenticationService;
 import ash.glay.hbfavclone.contentprovider.FeedDAO;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.DatabaseHelper;
@@ -37,8 +34,6 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
     ListView mListView;
     FeedAdapter mAdapter;
 
-    final String PREF_SETUP_COMPLETE = "complete";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,22 +42,26 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         ButterKnife.inject(this);
         getLoaderManager().initLoader(0, null, this);
 
-        // アカウント生成周り作り直す
-        boolean newAccount = false;
-        boolean setupComplete = getSharedPreferences("save", Context.MODE_PRIVATE).getBoolean(PREF_SETUP_COMPLETE, false);
+        initAccount();
+    }
 
-        Account account = StubAuthenticationService.getAccount();
-        AccountManager accountManager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
-        if (accountManager.addAccountExplicitly(account, null, null)) {
+    private void initAccount() {
+        Account account = ((Application) getApplication()).getUser();
+        if (account == null) {
+            // ユーザーがいないのでログインする必要あり
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, Constants.REQUEST_LOGIN);
+        } else {
             ContentResolver.setIsSyncable(account, HBFavFeedContentProvider.AUTHORITY, 1);
             ContentResolver.setSyncAutomatically(account, HBFavFeedContentProvider.AUTHORITY, true);
             ContentResolver.addPeriodicSync(account, HBFavFeedContentProvider.AUTHORITY, new Bundle(), 60 * 60);
-            newAccount = true;
+            HBFavFeedContentProvider.forceRefresh(account);
         }
-        if (newAccount || !setupComplete) {
-            HBFavFeedContentProvider.forceRefresh();
-            getSharedPreferences("save", Context.MODE_PRIVATE).edit().putBoolean(PREF_SETUP_COMPLETE, true).commit();
-        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -82,7 +81,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         final int id = item.getItemId();
         // 即断でSyncAdapterに同期させる
         if (id == R.id.action_execute) {
-            HBFavFeedContentProvider.forceRefresh();
+            HBFavFeedContentProvider.forceRefresh(((Application) getApplication()).getUser());
             return true;
         }
         // データベースの内容と同期ログを削除する
@@ -134,5 +133,15 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_LOGIN && resultCode != RESULT_OK) {
+            finish();
+        } else if ((requestCode == Constants.REQUEST_LOGIN && resultCode == RESULT_OK)) {
+            initAccount();
+        }
     }
 }

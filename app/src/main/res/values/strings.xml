@@ -16,5 +16,6 @@
     <string name="action_login">LOGIN</string>
     <string name="action_cancel">CANCEL</string>
     <string name="input_hatena_id">はてなIDを入力してください</string>
+    <string name="invalid_auth_token">不正なIDリクエストです</string>
 
 </resources>

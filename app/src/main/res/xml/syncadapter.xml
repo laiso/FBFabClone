@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="glay.ash.stub.account"
+    android:accountType="glay.ash.hatena.account"
     android:allowParallelSyncs="false"
     android:contentAuthority="ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider"
     android:isAlwaysSyncable="true"

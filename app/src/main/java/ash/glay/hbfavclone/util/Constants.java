@@ -20,5 +20,20 @@ public class Constants {
     /**
      * アカウントタイプ
      */
-    public static final String ACCOUNT_TYPE = "glay.ash.stub.account";
+    public static final String ACCOUNT_TYPE = "glay.ash.hatena.account";
+
+    /**
+     * アカウントトークンタイプ
+     */
+    public static final String ACCOUNT_AUTHTOKEN_TYPE = "glay.ash.hbfavclone.authtokentype";
+
+    /**
+     * ID入力レスポンス
+     */
+    public static final String ACCOUNT_RESPONSE = "glay.ash.hbfavclone.response";
+
+    /**
+     * 認証リクエスト
+     */
+    public static final int REQUEST_LOGIN = 3253;
 }

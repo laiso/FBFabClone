@@ -47,9 +47,9 @@ public class RecentActivity extends Activity {
                 logList.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            for (StackTraceElement stackTrace : e.getStackTrace())
+                logList.add(stackTrace.toString());
         }
-
         return logList;
     }
 }

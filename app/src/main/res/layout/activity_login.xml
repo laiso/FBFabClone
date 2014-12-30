@@ -15,7 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:ems="20"
+        android:ems="15"
+        android:maxLength="32"
         android:hint="@string/input_hatena_id"
         android:id="@+id/input_id" />
 
