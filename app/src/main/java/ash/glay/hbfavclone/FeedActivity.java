@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -28,10 +29,12 @@ import butterknife.InjectView;
 /**
  * フィードを表示するActivity
  */
-public class FeedActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FeedActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
-    @InjectView(R.id.listView)
+    @InjectView(R.id.content)
     ListView mListView;
+    @InjectView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefresh;
     FeedAdapter mAdapter;
 
     @Override
@@ -41,6 +44,8 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
 
         ButterKnife.inject(this);
         getLoaderManager().initLoader(0, null, this);
+        mSwipeRefresh.setOnRefreshListener(this);
+        mSwipeRefresh.setColorSchemeResources(R.color.primary, R.color.primary_dark, R.color.accent);
 
         initAccount();
     }
@@ -82,7 +87,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         final int id = item.getItemId();
         // 即断でSyncAdapterに同期させる
         if (id == R.id.action_execute) {
-            HBFavFeedContentProvider.forceRefresh(((Application) getApplication()).getUser());
+            executeForceRefresh();
             return true;
         }
         // データベースの内容と同期ログを削除する
@@ -130,6 +135,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         } else {
             mAdapter.changeCursor(data);
         }
+        mSwipeRefresh.setRefreshing(false);
     }
 
     @Override
@@ -156,8 +162,20 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
             return;
         }
 
+        mSwipeRefresh.setRefreshing(true);
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(account, HBFavFeedContentProvider.AUTHORITY, bundle);
+    }
+
+    private void executeForceRefresh() {
+        mSwipeRefresh.setRefreshing(true);
+        HBFavFeedContentProvider.forceRefresh(((Application) getApplication()).getUser());
+    }
+
+    @Override
+    public void onRefresh() {
+        executeForceRefresh();
+        ;
     }
 }

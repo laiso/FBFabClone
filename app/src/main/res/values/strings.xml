@@ -18,4 +18,11 @@
     <string name="input_hatena_id">はてなIDを入力してください</string>
     <string name="invalid_auth_token">不正なIDリクエストです</string>
 
+    <!-- 発言時刻 -->
+    <string name="right_now">たった今</string>
+    <string name="minute_ago">%1$d 分前</string>
+    <string name="hour_ago">%1$d 時間前</string>
+    <string name="day_ago">%1$d 日前</string>
+    <string name="format_date">%1$d月%2$d日</string>
+
 </resources>

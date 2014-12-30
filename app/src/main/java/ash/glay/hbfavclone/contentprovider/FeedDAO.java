@@ -74,7 +74,7 @@ public class FeedDAO {
             feed.favicon_url = new URI(cursor.getString(cursor.getColumnIndex(FAVICON_URL_COLUMN)));
             feed.comment = cursor.getString(cursor.getColumnIndex(COMMENT_COLUMN));
             feed.count = cursor.getInt(cursor.getColumnIndex(COUNT_COLUMN));
-            feed.datetime = new Date(cursor.getInt(cursor.getColumnIndex(DATETIME_COLUMN)));
+            feed.datetime = new Date(cursor.getLong(cursor.getColumnIndex(DATETIME_COLUMN)));
             feed.created_at = cursor.getString(cursor.getColumnIndex(CREATE_AT_COLUMN));
             feed.permalink = new URI(cursor.getString(cursor.getColumnIndex(PERMALINK_COLUMN)));
             feed.description = cursor.getString(cursor.getColumnIndex(DESCRIPTION_COLUMN));
