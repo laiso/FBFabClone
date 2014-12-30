@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.net;
+package ash.glay.hbfavclone.sync;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,9 +51,7 @@ public class FeedParser {
                 feed.thumbnail_url = bookmark.has("thumbnail_url") ? URI.create(bookmark.getString("thumbnail_url")) : null;
                 feeds.add(feed);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
         return feeds;

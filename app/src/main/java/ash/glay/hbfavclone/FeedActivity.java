@@ -18,13 +18,12 @@ import android.widget.ListView;
 
 import java.io.File;
 
-import ash.glay.hbfavclone.util.FeedAdapter;
+import ash.glay.hbfavclone.auth.StubAuthenticationService;
 import ash.glay.hbfavclone.contentprovider.FeedDAO;
-import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.DatabaseHelper;
-import ash.glay.hbfavclone.auth.StubAuthenticationService;
-import ash.glay.hbfavclone.service.SyncAdapter;
+import ash.glay.hbfavclone.util.Constants;
+import ash.glay.hbfavclone.util.FeedAdapter;
 import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -61,7 +60,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
             newAccount = true;
         }
         if (newAccount || !setupComplete) {
-            SyncAdapter.forceRefresh();
+            HBFavFeedContentProvider.forceRefresh();
             getSharedPreferences("save", Context.MODE_PRIVATE).edit().putBoolean(PREF_SETUP_COMPLETE, true).commit();
         }
     }
@@ -83,7 +82,7 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         final int id = item.getItemId();
         // 即断でSyncAdapterに同期させる
         if (id == R.id.action_execute) {
-            SyncAdapter.forceRefresh();
+            HBFavFeedContentProvider.forceRefresh();
             return true;
         }
         // データベースの内容と同期ログを削除する

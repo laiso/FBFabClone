@@ -1,6 +1,7 @@
 package ash.glay.hbfavclone.contentprovider;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -8,9 +9,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Bundle;
 
 import java.util.HashMap;
 
+import ash.glay.hbfavclone.auth.StubAuthenticationService;
 import ash.glay.hbfavclone.model.DatabaseHelper;
 
 import static ash.glay.hbfavclone.model.DatabaseHelper.COLUMN_ID;
@@ -125,5 +128,15 @@ public class HBFavFeedContentProvider extends ContentProvider {
         final int count = db.delete(TABLE_NAME_FEED, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
+    }
+
+    /**
+     * SyncAdapterの更新を即座に実行します。
+     */
+    public static void forceRefresh() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(StubAuthenticationService.getAccount(), AUTHORITY, bundle);
     }
 }

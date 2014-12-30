@@ -34,7 +34,7 @@
         </provider>
 
         <service
-            android:name=".service.SyncService"
+            android:name=".sync.SyncService"
             android:exported="true"
             android:process=":sync" >
             <intent-filter>

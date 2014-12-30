@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.net;
+package ash.glay.hbfavclone.sync;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,8 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.model.FeedItem;
+import ash.glay.hbfavclone.util.Constants;
 
 /**
  * フィードの取得を行うクラス
@@ -33,17 +33,12 @@ public class HBFavFeedConnection {
      * @param userName ユーザー名
      * @return フィードをリスト形式で取得、接続に失敗した場合はnull
      */
-    public static List<FeedItem> execute(String userName) {
+    public static List<FeedItem> execute(String userName) throws IOException , URISyntaxException{
         // URLをビルド
-        final URI uri;
-        try {
-            uri = new URIBuilder().setScheme(SCHEME)
-                    .setHost(HOST)
-                    .setPath("/" + userName + "/")
-                    .build();
-        } catch (URISyntaxException e) {
-            return null;
-        }
+        final URI uri = new URIBuilder().setScheme(SCHEME)
+                .setHost(HOST)
+                .setPath("/" + userName + "/")
+                .build();
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.addRequestInterceptor(new RequestAcceptEncoding());
@@ -61,21 +56,15 @@ public class HBFavFeedConnection {
             return httpClient.execute(request, new ResponseHandler<List<FeedItem>>() {
                 @Override
                 public List<FeedItem> handleResponse(HttpResponse httpResponse) throws IOException {
-                    // 200 OKでなければnullを返却
+                    // 200 OKでなければIOException投げる
                     if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                        return null;
+                        throw new IOException();
                     }
                     return FeedParser.parse(EntityUtilsHC4.toString(httpResponse.getEntity()));
                 }
             });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
-
-        return null;
     }
 }

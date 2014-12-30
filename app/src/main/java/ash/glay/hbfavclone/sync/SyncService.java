@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.service;
+package ash.glay.hbfavclone.sync;
 
 import android.app.Service;
 import android.content.Intent;
