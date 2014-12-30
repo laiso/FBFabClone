@@ -81,7 +81,7 @@ public class FeedAdapter extends CursorAdapter {
     /**
      * ビューホルダークラス
      */
-    private static class ViewHolder {
+    static class ViewHolder {
         @InjectView(R.id.userImage)
         ImageView userImage;
         @InjectView(R.id.userName)

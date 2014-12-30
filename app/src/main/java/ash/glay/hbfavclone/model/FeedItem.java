@@ -5,7 +5,6 @@ import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
 
 /**
  * フィードを保持するモデルオブジェクト
@@ -27,14 +26,4 @@ public class FeedItem {
     public String description;
     public URI thumbnail_url;
 
-    /**
-     * ユーザーを表すオブジェクト<br />
-     * テーブルを正規化したい
-     */
-    @Value
-    public static class User {
-        public String name;
-        public URI profile_image_url;
-
-    }
 }

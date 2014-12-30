@@ -103,6 +103,12 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
             Utility.copyFile(db, dst);
             return true;
         }
+        // ログイン起動
+        else if (id == R.id.action_login) {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ash.glay.hbfavclone.model.FeedItem;
+import ash.glay.hbfavclone.model.User;
 
 /**
  * FeedParser<br />
@@ -42,7 +43,7 @@ public class FeedParser {
                 feed.datetime = sDf.parse(bookmark.getString("datetime"));
                 feed.created_at = bookmark.getString("created_at");
                 JSONObject user = bookmark.getJSONObject("user");
-                feed.user = new FeedItem.User(
+                feed.user = new User(
                         user.getString("name"),
                         URI.create(user.getString("profile_image_url"))
                 );

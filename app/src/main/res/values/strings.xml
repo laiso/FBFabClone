@@ -7,7 +7,14 @@
     <string name="action_delete">Delete</string>
     <string name="action_recent">Recent</string>
     <string name="action_dump">Dump</string>
+
+    <!-- 最近の同期履歴 -->
     <string name="title_activity_recent">RecentActivity</string>
-    <string name="hello_world">Hello world!</string>
+
+    <!-- ログイン -->
+    <string name="title_activity_login">はてなID入力</string>
+    <string name="action_login">LOGIN</string>
+    <string name="action_cancel">CANCEL</string>
+    <string name="input_hatena_id">はてなIDを入力してください</string>
 
 </resources>

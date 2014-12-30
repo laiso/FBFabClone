@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
+import static ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider.*;
 
 /**
  * データベースヘルパ
@@ -25,19 +25,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_NAME_FEED + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                HBFavFeedContentProvider.TITLE_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.LINK_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.FAVICON_URL_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.COMMENT_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.COUNT_COLUMN + " INTEGER," +
-                HBFavFeedContentProvider.DATETIME_COLUMN + " INTEGER," +
-                HBFavFeedContentProvider.CREATE_AT_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.USER_NAME_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.USER_PROFILE_IMAGE_URL_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.PERMALINK_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.DESCRIPTION_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.THUMBNAIL_URL_COLUMN + " TEXT," +
-                HBFavFeedContentProvider.HASH_COLUMN + " INTEGER UNIQUE);");    // FeedItemのハッシュで一意性を担保
+                TITLE_COLUMN + " TEXT," +
+                LINK_COLUMN + " TEXT," +
+                FAVICON_URL_COLUMN + " TEXT," +
+                COMMENT_COLUMN + " TEXT," +
+                COUNT_COLUMN + " INTEGER," +
+                DATETIME_COLUMN + " INTEGER," +
+                CREATE_AT_COLUMN + " TEXT," +
+                USER_NAME_COLUMN + " TEXT," +
+                USER_PROFILE_IMAGE_URL_COLUMN + " TEXT," +
+                PERMALINK_COLUMN + " TEXT," +
+                DESCRIPTION_COLUMN + " TEXT," +
+                THUMBNAIL_URL_COLUMN + " TEXT," +
+                HASH_COLUMN + " INTEGER UNIQUE);");    // FeedItemのハッシュで一意性を担保
     }
 
     @Override

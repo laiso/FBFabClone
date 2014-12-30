@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import ash.glay.hbfavclone.model.FeedItem;
+import ash.glay.hbfavclone.model.User;
 
 /**
  * FeedのデータベースへアクセスするためのSingletonクラス
@@ -81,7 +82,7 @@ public class FeedDAO {
             }
             final String userName = cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.USER_NAME_COLUMN));
             final URI userImage = new URI(cursor.getString(cursor.getColumnIndex(HBFavFeedContentProvider.USER_PROFILE_IMAGE_URL_COLUMN)));
-            feed.user = new FeedItem.User(userName, userImage);
+            feed.user = new User(userName, userImage);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ash.glay.hbfavclone" >
+    package="ash.glay.hbfavclone">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -14,10 +14,10 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".FeedActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,18 +25,26 @@
             </intent-filter>
         </activity>
 
+
+        <activity
+            android:name=".RecentActivity"
+            android:label="@string/title_activity_recent" />
+        <activity
+            android:theme="@style/AppTheme.Dialog"
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login" />
+
         <provider
             android:name=".contentprovider.HBFavFeedContentProvider"
             android:authorities="ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider"
             android:enabled="true"
             android:exported="false"
-            android:syncable="true" >
-        </provider>
+            android:syncable="true"></provider>
 
         <service
             android:name=".sync.SyncService"
             android:exported="true"
-            android:process=":sync" >
+            android:process=":sync">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -45,7 +53,7 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        <service android:name=".auth.StubAuthenticationService" >
+        <service android:name=".auth.StubAuthenticationService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -55,10 +63,6 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <activity
-            android:name=".RecentActivity"
-            android:label="@string/title_activity_recent" >
-        </activity>
     </application>
 
 </manifest>

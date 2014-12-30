@@ -20,7 +20,7 @@
         android:layout_alignTop="@id/userImage"
         android:layout_toEndOf="@id/userImage"
         android:layout_toStartOf="@+id/when"
-        android:textColor="@android:color/black"
+        android:textColor="?android:textColorPrimary"
         android:textStyle="bold" />
 
     <TextView
@@ -29,9 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/userName"
         android:layout_below="@id/userName"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:textColor="@android:color/black" />
+        android:textColor="?android:textColorPrimary" />
 
     <ImageView
         android:id="@+id/favicon"
@@ -39,7 +38,8 @@
         android:layout_height="16dp"
         android:layout_alignStart="@id/userName"
         android:layout_below="@id/comment"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp" />
 
     <TextView
         android:id="@+id/pageTitle"
@@ -48,7 +48,7 @@
         android:layout_alignTop="@id/favicon"
         android:layout_toEndOf="@id/favicon"
         android:layout_marginEnd="8dp"
-        android:textColor="#ff7274ff" />
+        android:textColor="?android:colorPrimaryDark" />
 
     <TextView
         android:id="@+id/when"
@@ -57,5 +57,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:textColor="?android:textColorSecondary" />
 </RelativeLayout>
