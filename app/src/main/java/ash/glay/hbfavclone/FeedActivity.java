@@ -13,6 +13,8 @@ import android.os.Environment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.File;
@@ -20,11 +22,13 @@ import java.io.File;
 import ash.glay.hbfavclone.contentprovider.FeedDAO;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.DatabaseHelper;
+import ash.glay.hbfavclone.model.FeedItem;
 import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.util.FeedAdapter;
 import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnItemClick;
 
 /**
  * フィードを表示するActivity
@@ -64,10 +68,20 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         }
     }
 
+    @SuppressWarnings("unused")
+    @OnItemClick(R.id.content)
+    void itemClick(AdapterView<?> adapter, View view, int pos, long id) {
+        Cursor cursor = (Cursor) mListView.getItemAtPosition(pos);
+        FeedItem item = FeedDAO.getInstance().feedFromCursor(cursor);
+
+        Intent intent = new Intent(this, BookmarkActivity.class);
+        intent.putExtra(Constants.BUNDLE_KEY_URL, item.getLink().toString());
+        startActivity(intent);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        executeManualSync();
     }
 
     @Override
@@ -168,6 +182,9 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         ContentResolver.requestSync(account, HBFavFeedContentProvider.AUTHORITY, bundle);
     }
 
+    /**
+     * 強制的に同期を実行
+     */
     private void executeForceRefresh() {
         mSwipeRefresh.setRefreshing(true);
         HBFavFeedContentProvider.forceRefresh(((Application) getApplication()).getUser());

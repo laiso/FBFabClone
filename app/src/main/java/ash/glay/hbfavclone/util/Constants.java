@@ -36,4 +36,9 @@ public class Constants {
      * 認証リクエスト
      */
     public static final int REQUEST_LOGIN = 3253;
+
+    /**
+     * URLを渡すバンドルキー
+     */
+    public final static String BUNDLE_KEY_URL = "url-key";
 }
