@@ -55,13 +55,14 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
             ContentResolver.setIsSyncable(account, HBFavFeedContentProvider.AUTHORITY, 1);
             ContentResolver.setSyncAutomatically(account, HBFavFeedContentProvider.AUTHORITY, true);
             ContentResolver.addPeriodicSync(account, HBFavFeedContentProvider.AUTHORITY, new Bundle(), 60 * 60);
-            HBFavFeedContentProvider.forceRefresh(account);
+            executeManualSync();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        executeManualSync();
     }
 
     @Override
@@ -140,8 +141,23 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_LOGIN && resultCode != RESULT_OK) {
             finish();
-        } else if ((requestCode == Constants.REQUEST_LOGIN && resultCode == RESULT_OK)) {
+        } else if ((requestCode == Constants.REQUEST_LOGIN)) {
             initAccount();
         }
+    }
+
+    /**
+     * 手動での同期を実行<br />
+     * ただしEXPEDITEDフラグはtrueにしない
+     */
+    private void executeManualSync() {
+        Account account = ((Application) getApplication()).getUser();
+        if (account == null) {
+            return;
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(account, HBFavFeedContentProvider.AUTHORITY, bundle);
     }
 }
