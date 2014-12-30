@@ -17,6 +17,7 @@
     <string name="action_cancel">CANCEL</string>
     <string name="input_hatena_id">はてなIDを入力してください</string>
     <string name="invalid_auth_token">不正なIDリクエストです</string>
+    <string name="invalid_hatena_id">正しいIDを入力してください</string>
 
     <!-- 発言時刻 -->
     <string name="right_now">たった今</string>

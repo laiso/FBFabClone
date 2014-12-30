@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.regex.Pattern;
 
@@ -22,12 +25,26 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     @InjectView(R.id.input_id)
     EditText mInputedId;
 
+    @InjectView(R.id.alert)
+    TextView mAlertText;
+    @InjectView(R.id.alert_image)
+    ImageView mAlertImage;
+
+    boolean mHasError = false;
+
     // ユーザーIDとして使える文字列
     final private static Pattern PATTERN = Pattern.compile("[a-zA-Z0-9_-]+");
 
-    final private static InputFilter FILTER = new InputFilter() {
+    final private InputFilter FILTER = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (mHasError) {
+                mInputedId.setHint(getString(R.string.input_hatena_id));
+                mAlertText.setVisibility(View.INVISIBLE);
+                mAlertImage.setVisibility(View.INVISIBLE);
+                mHasError = false;
+            }
+
             if (PATTERN.matcher(source).matches()) {
                 return source;
             } else {
@@ -42,6 +59,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
 
+        mAlertText.setVisibility(View.INVISIBLE);
+        mAlertImage.setVisibility(View.INVISIBLE);
+
         // 入力フィルタを設定
         InputFilter[] filters = new InputFilter[mInputedId.getFilters().length + 1];
         System.arraycopy(mInputedId.getFilters(), 0, filters, 0, mInputedId.getFilters().length);
@@ -54,6 +74,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     void onLogon() {
         final String userId = mInputedId.getText().toString();
         if (userId.matches("[a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9]")) {
+            //TODO:はてなIDが存在するかどうかの判定作れるなら入れる
             final Account account = new Account(userId, Constants.ACCOUNT_TYPE);
             AccountManager.get(this).addAccountExplicitly(account, null, null);
 
@@ -65,7 +86,12 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             finish();
 
         } else {
-            // エラー
+            // エラーメッセージを表示
+            mInputedId.setText("");
+            mInputedId.setHint("");
+            mAlertText.setVisibility(View.VISIBLE);
+            mAlertImage.setVisibility(View.VISIBLE);
+            mHasError = true;
         }
     }
 
