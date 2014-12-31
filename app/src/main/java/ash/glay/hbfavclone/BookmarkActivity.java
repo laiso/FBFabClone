@@ -2,9 +2,14 @@ package ash.glay.hbfavclone;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +26,16 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
+import ash.glay.hbfavclone.model.BookmarkInfo;
+import ash.glay.hbfavclone.net.HBCountRequest;
 import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
@@ -45,6 +55,21 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
     private Animation HIDE_ANIMATION;
     private Animation SHOW_ANIMATION;
+
+    private JsonObjectRequest mHBCountRequest;
+
+    /**
+     * 情報取得時のローカルキャストレシーバ処理
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Constants.ACTION_RECEIVE_BOOKMARK_INFO)) {
+                BookmarkInfo info = (BookmarkInfo) intent.getSerializableExtra("data");
+                Toast.makeText(BookmarkActivity.this, "" + info.count + "件のブックマーク", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +137,25 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         mWebView.addView(mProgressBar, lp);
         mWebView.setScrollViewCallbacks(this);
         mWebView.loadUrl(url);
+
+        // ブックマークカウント取得
+        // TODO:ページ変わる度に再取得する
+        RequestQueue queue = ((Application) getApplication()).getRequestQueue();
+        mHBCountRequest = HBCountRequest.getHBCountRequest(this, url);
+        if (mHBCountRequest != null) {
+            queue.add(mHBCountRequest);
+            queue.start();
+        }
+
+        IntentFilter filter = new IntentFilter(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mHBCountRequest.cancel();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
     private void initializeAnimations() {

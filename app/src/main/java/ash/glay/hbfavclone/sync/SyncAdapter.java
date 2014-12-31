@@ -37,11 +37,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // フェッチを実行する、結果が取得できなければリターン
         try {
             List<FeedItem> result = HBFavFeedConnection.execute(account.name);
-            // バルクインサートで保存
             ContentValues[] values = FeedDAO.getInstance().convertFromFeedList(result);
-            int count = provider.bulkInsert(HBFavFeedContentProvider.CONTENT_URI, values);
+            int count = 0;
+            for (ContentValues value : values) {
+                if (provider.insert(HBFavFeedContentProvider.CONTENT_URI, value) != null) {
+                    count++;
+                }
+            }
             syncResult.stats.numInserts += count;
             writeLog(String.format("同期成功%d件", count));
+
+            // 更新0件時に通知を行う
+            if (count == 0) {
+                getContext().getContentResolver().notifyChange(HBFavFeedContentProvider.CONTENT_URI, null);
+            }
+
         } catch (IOException e) {
             syncResult.stats.numIoExceptions++;
             writeLog(String.format("同期失敗"));

@@ -108,7 +108,7 @@ public class HBFavFeedContentProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(returnUri, null);
             return returnUri;
         } else {
-            throw new IllegalArgumentException("Failed to insert row into " + uri);
+            return null;
         }
     }
 

@@ -41,4 +41,9 @@ public class Constants {
      * URLを渡すバンドルキー
      */
     public final static String BUNDLE_KEY_URL = "url-key";
+
+    /**
+     * ブックマーク情報取得時インテントアクション
+     */
+    public final static String ACTION_RECEIVE_BOOKMARK_INFO = "ash.glay.hbfavclone.hbcount";
 }
