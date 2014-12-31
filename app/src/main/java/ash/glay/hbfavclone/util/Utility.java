@@ -1,5 +1,8 @@
 package ash.glay.hbfavclone.util;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,4 +34,17 @@ public class Utility {
             e.printStackTrace();
         }
     }
+
+    /**
+     * テーマが設定しているActionBarの高さを取得します
+     *
+     * @param context
+     * @return
+     */
+    public static int getActionBarHeight(Context context) {
+        TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+        return TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
+    }
+
 }

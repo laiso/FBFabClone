@@ -5,8 +5,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -17,6 +18,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -24,6 +26,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import ash.glay.hbfavclone.util.Constants;
+import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -32,6 +35,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
     @InjectView(R.id.webView)
     ObservableWebView mWebView;
+    ProgressBar mProgressBar;
 
     ActionBar mActionBar;
 
@@ -59,7 +63,24 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         initializeAnimations();
 
         String url = getIntent().getStringExtra(Constants.BUNDLE_KEY_URL);
-        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                mProgressBar.setProgress(0);
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                mProgressBar.setVisibility(View.GONE);
+                mPageTitle.setText(view.getTitle());
+                if (view.getFavicon() != null) {
+                    mFavicon.setImageBitmap(view.getFavicon());
+                }
+            }
+        });
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onReceivedIcon(WebView view, Bitmap icon) {
@@ -72,16 +93,28 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                 super.onReceivedTitle(view, title);
                 mPageTitle.setText(title);
             }
+
+            @Override
+            public void onProgressChanged(WebView view, int progress) {
+                mProgressBar.setProgress(progress);
+                if (progress == 100) {
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
         });
+        // Lollipopのバグのために独自にプログレスバーを設定
+        ViewGroup.LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mProgressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+        mProgressBar.setVisibility(View.GONE);
+        mProgressBar.setMax(100);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.addView(mProgressBar, lp);
         mWebView.setScrollViewCallbacks(this);
         mWebView.loadUrl(url);
     }
 
     private void initializeAnimations() {
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-        final int ACTIONBAR_HEIGHT = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        final int ACTIONBAR_HEIGHT = Utility.getActionBarHeight(this);
         SHOW_ANIMATION = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -97,7 +130,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 LayoutParams params = (FrameLayout.LayoutParams) mWebView.getLayoutParams();
-                params.topMargin = ACTIONBAR_HEIGHT - (int)(ACTIONBAR_HEIGHT * interpolatedTime);
+                params.topMargin = ACTIONBAR_HEIGHT - (int) (ACTIONBAR_HEIGHT * interpolatedTime);
                 mWebView.setLayoutParams(params);
             }
         };
