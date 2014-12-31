@@ -2,7 +2,6 @@ package ash.glay.hbfavclone.util;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -30,11 +29,13 @@ import butterknife.InjectView;
 public class FeedAdapter extends CursorAdapter {
 
     final private ImageLoader mImageLoader;
+    final private BitmapCache mBitmapCache;
 
     public FeedAdapter(Context context, Cursor cursor) {
         super(context, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         RequestQueue queue = ((Application) context.getApplicationContext()).getRequestQueue();
-        mImageLoader = new ImageLoader(queue, new BitmapCache());
+        mBitmapCache = new BitmapCache();
+        mImageLoader = new ImageLoader(queue, mBitmapCache);
     }
 
     @Override
@@ -61,14 +62,12 @@ public class FeedAdapter extends CursorAdapter {
         holder.pageTitle.setText(item.title);
         holder.when.setText(getTimeString(context, item.datetime));
 
-        // この辺バグってそう
         if (holder.userImage.getTag() != null) {
             ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
             imageContainer.cancelRequest();
         }
 
-        holder.userImage.setImageDrawable(new ColorDrawable(android.R.color.transparent));
-        ImageLoader.ImageListener userImageListener = ImageLoader.getImageListener(holder.userImage, 0, 0);
+        ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
         holder.userImage.setTag(mImageLoader.get(item.user.profile_image_url.toString(), userImageListener));
 
         if (holder.favicon.getTag() != null) {
@@ -76,8 +75,7 @@ public class FeedAdapter extends CursorAdapter {
             imageContainer.cancelRequest();
         }
 
-        holder.favicon.setImageDrawable(new ColorDrawable(android.R.color.transparent));
-        ImageLoader.ImageListener faviconLoader = ImageLoader.getImageListener(holder.favicon, 0, 0);
+        ImageLoader.ImageListener faviconLoader = ImageLoader.getImageListener(holder.favicon, android.R.color.transparent, android.R.color.transparent);
         holder.userImage.setTag(mImageLoader.get(item.favicon_url.toString(), faviconLoader));
     }
 
@@ -94,6 +92,8 @@ public class FeedAdapter extends CursorAdapter {
         }
         // 1日以内なら
         else if (second < 60 * 60 * 24) {
+            // 23時間30分以上前のとき、「24時間前」が出るのは微妙
+            // あと本家は1日前の情報は「昨日」表記
             return context.getString(R.string.hour_ago, Math.round((float) second / 3600.f));
         }
         // 昨日以前であればフォーマットする
