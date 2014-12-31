@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="48dp"
-    android:paddingBottom="8dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/userImage"
@@ -11,7 +11,7 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="8dp" />
+        android:layout_margin="8dp"/>
 
     <TextView
         android:id="@+id/userName"
@@ -20,8 +20,8 @@
         android:layout_alignTop="@id/userImage"
         android:layout_toEndOf="@id/userImage"
         android:layout_toStartOf="@+id/when"
-        android:textColor="?android:textColorPrimary"
-        android:textStyle="bold" />
+        android:textColor="?android:textColorPrimaryInverse"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/comment"
@@ -30,7 +30,7 @@
         android:layout_alignStart="@id/userName"
         android:layout_below="@id/userName"
         android:layout_marginEnd="8dp"
-        android:textColor="?android:textColorPrimary" />
+        android:textColor="?android:textColorPrimaryInverse"/>
 
     <ImageView
         android:id="@+id/favicon"
@@ -39,7 +39,7 @@
         android:layout_alignStart="@id/userName"
         android:layout_below="@id/comment"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp" />
+        android:layout_marginRight="8dp"/>
 
     <TextView
         android:id="@+id/pageTitle"
@@ -48,7 +48,7 @@
         android:layout_alignTop="@id/favicon"
         android:layout_toEndOf="@id/favicon"
         android:layout_marginEnd="8dp"
-        android:textColor="?android:colorPrimaryDark" />
+        android:textColor="?android:colorPrimaryDark"/>
 
     <TextView
         android:id="@+id/when"
@@ -58,5 +58,5 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="?android:textColorSecondary" />
+        android:textColor="?android:textColorSecondary"/>
 </RelativeLayout>

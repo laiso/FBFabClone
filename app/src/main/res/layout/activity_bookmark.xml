@@ -1,4 +1,29 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    tools:context="ash.glay.hbfavclone.BookmarkActivity" tools:ignore="MergeRootFrame" />
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="ash.glay.hbfavclone.BookmarkActivity">
+
+    <com.github.ksoichiro.android.observablescrollview.ObservableWebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:actionBarSize"
+        android:layout_marginBottom="48dp"
+        android:id="@+id/webView"/>
+
+    <!-- Toolbarと固定の部品を包含するレイアウト -->
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_height="48dp"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:background="?android:colorPrimary"
+            android:minHeight="48dp"/>
+    </RelativeLayout>
+</FrameLayout>

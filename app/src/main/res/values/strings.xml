@@ -25,6 +25,4 @@
     <string name="hour_ago">%1$d 時間前</string>
     <string name="day_ago">%1$d 日前</string>
 
-    <string name="title_activity_bookmark">BookmarkActivity</string>
-
 </resources>
