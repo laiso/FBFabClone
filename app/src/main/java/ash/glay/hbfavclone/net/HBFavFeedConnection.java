@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone.sync;
+package ash.glay.hbfavclone.net;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import ash.glay.hbfavclone.model.FeedItem;
+import ash.glay.hbfavclone.sync.FeedParser;
 import ash.glay.hbfavclone.util.Constants;
 
 /**

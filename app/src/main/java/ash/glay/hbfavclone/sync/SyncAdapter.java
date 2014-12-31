@@ -21,6 +21,7 @@ import java.util.List;
 import ash.glay.hbfavclone.contentprovider.FeedDAO;
 import ash.glay.hbfavclone.contentprovider.HBFavFeedContentProvider;
 import ash.glay.hbfavclone.model.FeedItem;
+import ash.glay.hbfavclone.net.HBFavFeedConnection;
 
 /**
  * SyncAdapter
