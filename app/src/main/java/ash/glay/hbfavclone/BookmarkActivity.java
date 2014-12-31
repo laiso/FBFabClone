@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
@@ -134,8 +135,9 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                 mWebView.setLayoutParams(params);
             }
         };
+        HIDE_ANIMATION.setStartOffset(50);
         HIDE_ANIMATION.setDuration(200);
-        HIDE_ANIMATION.setInterpolator(new DecelerateInterpolator());
+        HIDE_ANIMATION.setInterpolator(new AccelerateInterpolator());
     }
 
     @Override
