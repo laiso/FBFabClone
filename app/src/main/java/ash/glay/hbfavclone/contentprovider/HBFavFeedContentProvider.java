@@ -102,7 +102,7 @@ public class HBFavFeedContentProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
-        final long rowId = db.insertWithOnConflict(uri.getPathSegments().get(0), null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        final long rowId = db.insertWithOnConflict(uri.getPathSegments().get(0), null, values, SQLiteDatabase.CONFLICT_IGNORE);
         if (rowId > 0) {
             Uri returnUri = ContentUris.withAppendedId(uri, rowId);
             getContext().getContentResolver().notifyChange(returnUri, null);
