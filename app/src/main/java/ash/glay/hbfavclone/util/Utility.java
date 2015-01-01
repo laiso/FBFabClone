@@ -102,4 +102,26 @@ public class Utility {
         canvas.drawBitmap(src, matrix, paint);
         return dst;
     }
+
+    /**
+     * ユーザーアイコンを円で切り抜いて返します
+     *
+     * @param cache      キャッシュ
+     * @param requestUrl ユーザーアイコンのリクエストURL
+     * @return
+     */
+    public static Bitmap getClippedUszerIcon(BitmapCache cache, String requestUrl) {
+        final String convertedUrl = requestUrl + "/converted";
+        if (cache.getBitmap(convertedUrl) != null) {
+            return cache.getBitmap(convertedUrl);
+        }
+
+        Bitmap src = cache.getBitmap(requestUrl);
+        src = eraseBG(src, -1);         // use for white background
+        src = eraseBG(src, -16777216);  // use for black background
+        Bitmap dst = Utility.clipCircle(src);
+        cache.putBitmap(convertedUrl, dst);
+
+        return dst;
+    }
 }

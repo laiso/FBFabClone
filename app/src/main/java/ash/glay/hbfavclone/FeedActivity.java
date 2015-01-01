@@ -193,6 +193,5 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     public void onRefresh() {
         executeForceRefresh();
-        ;
     }
 }

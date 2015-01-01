@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import ash.glay.hbfavclone.util.BitmapCache;
 import ash.glay.hbfavclone.util.Constants;
 
 /**
@@ -15,12 +16,19 @@ import ash.glay.hbfavclone.util.Constants;
 public class Application extends android.app.Application {
 
     private static RequestQueue mQueue;
-
+    private static BitmapCache mBitmapCache;
     private Account mCurrentUser;
 
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    public synchronized BitmapCache getBitmapCache() {
+        if (mBitmapCache == null) {
+            mBitmapCache = new BitmapCache();
+        }
+        return mBitmapCache;
     }
 
     public synchronized RequestQueue getRequestQueue() {

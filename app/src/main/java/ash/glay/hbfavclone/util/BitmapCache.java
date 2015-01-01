@@ -7,8 +7,8 @@ import com.android.volley.toolbox.ImageLoader;
 
 /**
  * ビットマップをキャッシュするよくある実装
- *
- * @see http://dev.classmethod.jp/smartphone/android/android-tips-51-volley/
+ * <p/>
+ * <a href="http://dev.classmethod.jp/smartphone/android/android-tips-51-volley/">ネットワーク通信・キャッシュ処理をより速く、簡単に実装できるライブラリ “Volley” を使ってみた</a>
  */
 public class BitmapCache implements ImageLoader.ImageCache {
     private LruCache<String, Bitmap> mCache;

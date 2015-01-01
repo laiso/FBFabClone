@@ -254,6 +254,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
      */
     private void requestBookmark(String url) {
         // キャッシュにあればキャッシュを利用
+        // TODO:今見てるページのURLとリクエストしたURLが違う（スマホ用ページ）場合どーすればいいの…
         if (mBookmarkInfoCache.get(url) != null) {
             Intent intent = new Intent(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
             intent.putExtra("data", mBookmarkInfoCache.get(url));

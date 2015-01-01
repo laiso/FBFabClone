@@ -34,7 +34,7 @@ public class FeedAdapter extends CursorAdapter {
     public FeedAdapter(Context context, Cursor cursor) {
         super(context, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         RequestQueue queue = ((Application) context.getApplicationContext()).getRequestQueue();
-        mBitmapCache = new BitmapCache();
+        mBitmapCache = ((Application) context.getApplicationContext()).getBitmapCache();
         mImageLoader = new ImageLoader(queue, mBitmapCache);
     }
 
