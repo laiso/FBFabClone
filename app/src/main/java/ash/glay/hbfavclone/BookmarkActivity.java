@@ -35,6 +35,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import ash.glay.hbfavclone.model.BookmarkInfo;
+import ash.glay.hbfavclone.model.CommentedUser;
 import ash.glay.hbfavclone.net.HBCountRequest;
 import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.util.Utility;
@@ -56,10 +57,10 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
     @InjectView(R.id.action_previous)
     Button mPreviousButton;
-    @InjectView(R.id.action_reload)
-    Button mReloadButton;
     @InjectView(R.id.action_users)
-    TextView mUsersButton;
+    Button mUsersButton;
+    @InjectView(R.id.user_counts)
+    TextView mUserCounts;
 
     private Animation HIDE_ANIMATION;
     private Animation SHOW_ANIMATION;
@@ -76,8 +77,22 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.ACTION_RECEIVE_BOOKMARK_INFO)) {
                 BookmarkInfo info = (BookmarkInfo) intent.getSerializableExtra("data");
-                mUsersButton.setText(info.getCount() + " users");
-                mUsersButton.setEnabled(true);
+
+                // ブコメのあるコメント件数取得
+                int comment = 0;
+                for (CommentedUser user : info.commentedUserList) {
+                    if (user.comment.length() != 0) {
+                        comment++;
+                    }
+                }
+
+                // コメント件数が1件でもあればボタン活性化
+                if (comment > 0) {
+                    mUsersButton.setEnabled(true);
+                    mUserCounts.setVisibility(View.VISIBLE);
+                    mUserCounts.setText("" + comment);
+                    mUserCounts.setElevation(10.f);
+                }
             }
         }
     };
@@ -153,6 +168,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
         mPreviousButton.setEnabled(false);
         mUsersButton.setEnabled(false);
+        mUserCounts.setVisibility(View.INVISIBLE);
 
         mQueue = ((Application) getApplication()).getRequestQueue();
         requestBookmark(initialUrl);

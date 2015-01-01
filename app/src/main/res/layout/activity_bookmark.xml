@@ -48,17 +48,30 @@
                 android:layout_height="246dp"
                 android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/action_users"
-                android:layout_width="120dp"
-                android:layout_height="36dp"
-                android:paddingBottom="2dp"
-                android:textSize="20sp"
-                android:enabled="false"
-                android:gravity="center_vertical|end"
-                android:layout_marginEnd="8dp"
-                android:text="- users"
-                android:textColor="@color/icon_state"/>
+            <FrameLayout
+                android:id="@+id/favorite_frame"
+                android:layout_width="48dp"
+                android:layout_height="48dp">
+
+                <Button
+                    android:id="@+id/action_users"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/inseted_bookmark"
+                    android:backgroundTint="@color/icon_state"/>
+
+                <TextView
+                    android:id="@+id/user_counts"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/oval"
+                    android:textColor="@color/icons"
+                    android:gravity="center"
+                    android:textSize="8sp"
+                    android:lines="1"/>
+            </FrameLayout>
         </LinearLayout>
 
 
