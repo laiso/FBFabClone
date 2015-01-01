@@ -182,6 +182,14 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     protected void onDestroy() {
         mHBCountRequest.cancel();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        //WebViewの解放
+        ViewGroup parent = (ViewGroup) mWebView.getParent();
+        parent.removeView(mWebView);
+        mWebView.stopLoading();
+        mWebView.setWebChromeClient(null);
+        mWebView.setWebViewClient(null);
+        mWebView.destroy();
+        mWebView = null;
         super.onDestroy();
     }
 
