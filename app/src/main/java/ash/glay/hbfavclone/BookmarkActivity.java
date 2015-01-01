@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.LruCache;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,9 @@ import android.view.animation.Transformation;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,13 +55,11 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     TextView mPageTitle;
 
     @InjectView(R.id.action_previous)
-    ImageButton mPreviousButton;
+    Button mPreviousButton;
     @InjectView(R.id.action_reload)
-    ImageButton mReloadButton;
+    Button mReloadButton;
     @InjectView(R.id.action_users)
     TextView mUsersButton;
-
-    private String mCurrentUrl;
 
     private Animation HIDE_ANIMATION;
     private Animation SHOW_ANIMATION;
@@ -70,8 +67,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     private JsonObjectRequest mHBCountRequest;
 
     private RequestQueue mQueue;
-
-    private LruCache<String, BookmarkInfo> mBookmarkInfoCache;
 
     /**
      * 情報取得時のローカルキャストレシーバ処理
@@ -81,14 +76,8 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.ACTION_RECEIVE_BOOKMARK_INFO)) {
                 BookmarkInfo info = (BookmarkInfo) intent.getSerializableExtra("data");
-                mBookmarkInfoCache.put(info.url, info);
-                if (info.url.equals(mCurrentUrl)) {
-                    mUsersButton.setText(info.getCount() + " users");
-                    mUsersButton.setEnabled(true);
-                } else {
-                    mUsersButton.setText("- users");
-                    mUsersButton.setEnabled(false);
-                }
+                mUsersButton.setText(info.getCount() + " users");
+                mUsersButton.setEnabled(true);
             }
         }
     };
@@ -111,18 +100,12 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         initializeAnimations();
 
         final String initialUrl = getIntent().getStringExtra(Constants.BUNDLE_KEY_URL);
-        mCurrentUrl = initialUrl;
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setProgress(0);
                 mProgressBar.setVisibility(View.VISIBLE);
-                mCurrentUrl = url;
-
-                mUsersButton.setText("- users");
-                mUsersButton.setEnabled(false);
-                requestBookmark(url);
             }
 
             @Override
@@ -166,13 +149,13 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addView(mProgressBar, lp);
         mWebView.setScrollViewCallbacks(this);
-        mWebView.loadUrl(mCurrentUrl);
+        mWebView.loadUrl(initialUrl);
 
         mPreviousButton.setEnabled(false);
         mUsersButton.setEnabled(false);
 
-        mBookmarkInfoCache = new LruCache<>(5 * 1024 * 1024);
         mQueue = ((Application) getApplication()).getRequestQueue();
+        requestBookmark(initialUrl);
 
         IntentFilter filter = new IntentFilter(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
@@ -261,21 +244,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
      * @param url
      */
     private void requestBookmark(String url) {
-        // キャッシュにあればキャッシュを利用
-        // TODO:今見てるページのURLとリクエストしたURLが違う（スマホ用ページ）場合どーすればいいの…
-        if (mBookmarkInfoCache.get(url) != null) {
-            Intent intent = new Intent(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
-            intent.putExtra("data", mBookmarkInfoCache.get(url));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-            return;
-        }
-
-        // 既存のリクエスト停止
-        if (mHBCountRequest != null) {
-            mHBCountRequest.cancel();
-            mHBCountRequest = null;
-        }
-
         // クエリ実行
         mHBCountRequest = HBCountRequest.getHBCountRequest(BookmarkActivity.this, url);
         if (mHBCountRequest != null) {

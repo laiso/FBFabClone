@@ -27,27 +27,21 @@
             android:gravity="center_vertical"
             android:minHeight="48dp">
 
-            <ImageButton
+            <Button
                 android:id="@+id/action_previous"
-                android:padding="4dp"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:scaleType="fitCenter"
-                android:tint="@color/icon_state"
-                android:background="@null"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/previous_64"/>
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="@color/icon_state"
+                android:background="@drawable/inseted_previous64"
+                android:layout_marginStart="8dp"/>
 
-            <ImageButton
+            <Button
                 android:id="@+id/action_reload"
-                android:padding="4dp"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:tint="@color/icon_state"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_autorenew_black_36dp"/>
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/inseted_autorenew"
+                android:backgroundTint="@color/icon_state"
+                android:layout_marginStart="8dp"/>
 
             <Space
                 android:layout_width="0dp"
