@@ -42,9 +42,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             for (ContentValues value : values) {
                 if (provider.insert(HBFavFeedContentProvider.CONTENT_URI, value) != null) {
                     count++;
+                } else {
+                    syncResult.stats.numSkippedEntries++;
                 }
             }
-            syncResult.stats.numInserts += count;
             writeLog(String.format("同期成功%d件", count));
 
             // 更新0件時に通知を行う
