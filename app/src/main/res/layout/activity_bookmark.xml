@@ -18,12 +18,55 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
+        <LinearLayout
             android:id="@+id/tool_bar"
             android:layout_height="48dp"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
-            android:background="?android:colorPrimary"
-            android:minHeight="48dp"/>
+            android:background="#EEEEEE"
+            android:gravity="center_vertical"
+            android:minHeight="48dp">
+
+            <ImageButton
+                android:id="@+id/action_previous"
+                android:padding="4dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/icon_state"
+                android:background="@null"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/previous_64"/>
+
+            <ImageButton
+                android:id="@+id/action_reload"
+                android:padding="4dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:tint="@color/icon_state"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_autorenew_black_36dp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="246dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/action_users"
+                android:layout_width="120dp"
+                android:layout_height="36dp"
+                android:paddingBottom="2dp"
+                android:textSize="20sp"
+                android:enabled="false"
+                android:gravity="center_vertical|end"
+                android:layout_marginEnd="8dp"
+                android:text="- users"
+                android:textColor="@color/icon_state"/>
+        </LinearLayout>
+
+
     </RelativeLayout>
 </FrameLayout>

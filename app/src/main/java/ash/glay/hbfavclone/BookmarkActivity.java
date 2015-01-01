@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.LruCache;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -40,6 +41,7 @@ import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.util.Utility;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class BookmarkActivity extends Activity implements ObservableScrollViewCallbacks {
@@ -53,10 +55,23 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     ImageView mFavicon;
     TextView mPageTitle;
 
+    @InjectView(R.id.action_previous)
+    ImageButton mPreviousButton;
+    @InjectView(R.id.action_reload)
+    ImageButton mReloadButton;
+    @InjectView(R.id.action_users)
+    TextView mUsersButton;
+
+    private String mCurrentUrl;
+
     private Animation HIDE_ANIMATION;
     private Animation SHOW_ANIMATION;
 
     private JsonObjectRequest mHBCountRequest;
+
+    private RequestQueue mQueue;
+
+    private LruCache<String, BookmarkInfo> mBookmarkInfoCache;
 
     /**
      * 情報取得時のローカルキャストレシーバ処理
@@ -66,7 +81,14 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.ACTION_RECEIVE_BOOKMARK_INFO)) {
                 BookmarkInfo info = (BookmarkInfo) intent.getSerializableExtra("data");
-                Toast.makeText(BookmarkActivity.this, "" + info.count + "件のブックマーク", Toast.LENGTH_SHORT).show();
+                mBookmarkInfoCache.put(info.url, info);
+                if (info.url.equals(mCurrentUrl)) {
+                    mUsersButton.setText(info.getCount() + " users");
+                    mUsersButton.setEnabled(true);
+                } else {
+                    mUsersButton.setText("- users");
+                    mUsersButton.setEnabled(false);
+                }
             }
         }
     };
@@ -88,13 +110,19 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
         initializeAnimations();
 
-        String url = getIntent().getStringExtra(Constants.BUNDLE_KEY_URL);
+        final String initialUrl = getIntent().getStringExtra(Constants.BUNDLE_KEY_URL);
+        mCurrentUrl = initialUrl;
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setProgress(0);
                 mProgressBar.setVisibility(View.VISIBLE);
+                mCurrentUrl = url;
+
+                mUsersButton.setText("- users");
+                mUsersButton.setEnabled(false);
+                requestBookmark(url);
             }
 
             @Override
@@ -105,6 +133,8 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                 if (view.getFavicon() != null) {
                     mFavicon.setImageBitmap(view.getFavicon());
                 }
+                mPreviousButton.setEnabled(view.canGoBack());
+                mReloadButton.setEnabled(true);
             }
         });
         mWebView.setWebChromeClient(new WebChromeClient() {
@@ -136,16 +166,13 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addView(mProgressBar, lp);
         mWebView.setScrollViewCallbacks(this);
-        mWebView.loadUrl(url);
+        mWebView.loadUrl(mCurrentUrl);
 
-        // ブックマークカウント取得
-        // TODO:ページ変わる度に再取得する
-        RequestQueue queue = ((Application) getApplication()).getRequestQueue();
-        mHBCountRequest = HBCountRequest.getHBCountRequest(this, url);
-        if (mHBCountRequest != null) {
-            queue.add(mHBCountRequest);
-            queue.start();
-        }
+        mPreviousButton.setEnabled(false);
+        mUsersButton.setEnabled(false);
+
+        mBookmarkInfoCache = new LruCache<>(5 * 1024 * 1024);
+        mQueue = ((Application) getApplication()).getRequestQueue();
 
         IntentFilter filter = new IntentFilter(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
@@ -218,5 +245,49 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * ブックマーク数を取得します
+     *
+     * @param url
+     */
+    private void requestBookmark(String url) {
+        // キャッシュにあればキャッシュを利用
+        if (mBookmarkInfoCache.get(url) != null) {
+            Intent intent = new Intent(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
+            intent.putExtra("data", mBookmarkInfoCache.get(url));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            return;
+        }
+
+        // 既存のリクエスト停止
+        if (mHBCountRequest != null) {
+            mHBCountRequest.cancel();
+            mHBCountRequest = null;
+        }
+
+        // クエリ実行
+        mHBCountRequest = HBCountRequest.getHBCountRequest(BookmarkActivity.this, url);
+        if (mHBCountRequest != null) {
+            mQueue.add(mHBCountRequest);
+            mQueue.start();
+        }
+    }
+
+    @OnClick(R.id.action_reload)
+    public void onActionReload() {
+        mWebView.reload();
+    }
+
+
+    @OnClick(R.id.action_previous)
+    public void onActionPrevious() {
+        mWebView.goBack();
+    }
+
+    @OnClick(R.id.action_users)
+    public void onActionUsers() {
+
     }
 }

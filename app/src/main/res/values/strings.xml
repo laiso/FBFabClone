@@ -7,6 +7,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_recent">Recent</string>
     <string name="action_dump">Dump</string>
+    <string name="action_previous">previous</string>
+    <string name="action_reload">reload</string>
 
     <!-- 最近の同期履歴 -->
     <string name="title_activity_recent">RecentActivity</string>

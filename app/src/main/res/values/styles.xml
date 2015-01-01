@@ -9,8 +9,7 @@
         <item name="android:textColorPrimaryInverse">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="android:textColorHighlight">@android:color/white</item>
-        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
-        <item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+        <item name="colorControlNormal">@color/icons</item>
     </style>
 
     <style name="AppTheme.Dialog" parent="android:Theme.Material.Light.Dialog">
