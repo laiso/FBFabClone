@@ -51,7 +51,8 @@
             <FrameLayout
                 android:id="@+id/favorite_frame"
                 android:layout_width="48dp"
-                android:layout_height="48dp">
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp">
 
                 <Button
                     android:id="@+id/action_users"
@@ -62,8 +63,8 @@
 
                 <TextView
                     android:id="@+id/user_counts"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/oval"
