@@ -106,6 +106,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setProgress(0);
                 mProgressBar.setVisibility(View.VISIBLE);
+                mPreviousButton.setEnabled(view.canGoBack());
             }
 
             @Override
@@ -117,7 +118,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                     mFavicon.setImageBitmap(view.getFavicon());
                 }
                 mPreviousButton.setEnabled(view.canGoBack());
-                mReloadButton.setEnabled(true);
             }
         });
         mWebView.setWebChromeClient(new WebChromeClient() {
