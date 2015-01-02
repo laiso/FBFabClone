@@ -28,19 +28,35 @@ import butterknife.InjectView;
 public class UserCommentListView extends Object {
 
     View mRootView;
+    @InjectView(R.id.recyler_view)
     RecyclerView mRecyclerView;
+    @InjectView(R.id.header)
+    TextView mHeader;
+    @InjectView(R.id.footer)
+    TextView mFooter;
+    @InjectView(R.id.grid_view)
+    View mOtherUsers;
 
     final private Context mContext;
+    final private ImageLoader mImageLoader;
+    final private BitmapCache mBitmapCache;
+
     private BookmarkInfo mBookmarkInfo;
     private UserbookmarkAdapter mAdapter;
 
     public UserCommentListView(Context context, BookmarkInfo bookmarkInfo) {
         mBookmarkInfo = bookmarkInfo;
         mRootView = LayoutInflater.from(context).inflate(R.layout.listview_usercomment, null);
-        mRecyclerView = ButterKnife.findById(mRootView, R.id.recyler_view);
+        ButterKnife.inject(this, mRootView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         mContext = context.getApplicationContext();
+
+        mHeader.setText(bookmarkInfo.getHasCommentUsers().size() + " 件のコメント");
+
+        mBitmapCache = ((Application) mContext.getApplicationContext()).getBitmapCache();
+        RequestQueue queue = ((Application) mContext.getApplicationContext()).getRequestQueue();
+        mImageLoader = new ImageLoader(queue, mBitmapCache);
     }
 
     public void destroy() {
@@ -49,6 +65,7 @@ public class UserCommentListView extends Object {
             mRecyclerView.setAdapter(null);
             mRecyclerView = null;
         }
+        ButterKnife.reset(this);
     }
 
     /**
@@ -59,8 +76,13 @@ public class UserCommentListView extends Object {
      */
     public View getView() {
         if (mAdapter == null) {
-            mAdapter = new UserbookmarkAdapter(mBookmarkInfo.getHasCommentUsers(), mContext);
+            mAdapter = new UserbookmarkAdapter(mBookmarkInfo.getHasCommentUsers());
             mRecyclerView.setAdapter(mAdapter);
+
+            if (mBookmarkInfo.getNotCommentUsers().size() == 0) {
+                mFooter.setVisibility(View.GONE);
+                mOtherUsers.setVisibility(View.GONE);
+            }
         }
 
         return mRootView;
@@ -88,18 +110,11 @@ public class UserCommentListView extends Object {
     /**
      * RecyclerViewのアダプタ
      */
-    static class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
-        final private Context mContext;
-        final private ImageLoader mImageLoader;
-        final private BitmapCache mBitmapCache;
         final private List<CommentedUser> mData;
 
-        UserbookmarkAdapter(List<CommentedUser> data, Context context) {
-            mContext = context.getApplicationContext();
-            RequestQueue queue = ((Application) mContext.getApplicationContext()).getRequestQueue();
-            mBitmapCache = ((Application) mContext.getApplicationContext()).getBitmapCache();
-            mImageLoader = new ImageLoader(queue, mBitmapCache);
+        UserbookmarkAdapter(List<CommentedUser> data) {
             mData = data;
         }
 

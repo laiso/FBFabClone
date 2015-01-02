@@ -27,4 +27,8 @@
     <string name="hour_ago">%1$d 時間前</string>
     <string name="day_ago">%1$d 日前</string>
 
+    <!-- コメント表示 -->
+    <string name="commented_users">コメント</string>
+    <string name="another_users">ブックマークしたユーザー</string>
+
 </resources>
