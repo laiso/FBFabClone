@@ -42,8 +42,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             for (ContentValues value : values) {
                 if (provider.insert(HBFavFeedContentProvider.CONTENT_URI, value) != null) {
                     count++;
-                } else {
-                    syncResult.stats.numSkippedEntries++;
                 }
             }
             writeLog(String.format("同期成功%d件", count));
