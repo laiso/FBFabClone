@@ -38,10 +38,10 @@
         android:background="@color/primary"
         android:textColor="@color/primary_light"
         android:text="@string/another_users"
-        android:layout_above="@+id/grid_view"/>
+        android:layout_above="@+id/icon_view"/>
 
-    <GridView
-        android:id="@+id/grid_view"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/icon_view"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentStart="true"

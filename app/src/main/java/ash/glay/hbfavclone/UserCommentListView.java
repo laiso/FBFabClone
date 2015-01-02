@@ -3,6 +3,7 @@ package ash.glay.hbfavclone;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,8 @@ public class UserCommentListView extends Object {
     TextView mHeader;
     @InjectView(R.id.footer)
     TextView mFooter;
-    @InjectView(R.id.grid_view)
-    View mOtherUsers;
+    @InjectView(R.id.icon_view)
+    RecyclerView mOtherUsers;
 
     final private Context mContext;
     final private ImageLoader mImageLoader;
@@ -49,6 +50,7 @@ public class UserCommentListView extends Object {
         mRootView = LayoutInflater.from(context).inflate(R.layout.listview_usercomment, null);
         ButterKnife.inject(this, mRootView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mOtherUsers.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
 
         mContext = context.getApplicationContext();
 
@@ -82,6 +84,8 @@ public class UserCommentListView extends Object {
             if (mBookmarkInfo.getNotCommentUsers().size() == 0) {
                 mFooter.setVisibility(View.GONE);
                 mOtherUsers.setVisibility(View.GONE);
+            } else {
+                mOtherUsers.setAdapter(new NoCommenterAdapter(mBookmarkInfo.getNotCommentUsers()));
             }
         }
 
@@ -108,7 +112,7 @@ public class UserCommentListView extends Object {
     }
 
     /**
-     * RecyclerViewのアダプタ
+     * RecyclerViewのアダプタ（コメントあり）
      */
     class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
@@ -142,6 +146,54 @@ public class UserCommentListView extends Object {
                 imageContainer.cancelRequest();
             }
 
+            ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
+            holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
+        }
+    }
+
+    /**
+     * ビューホルダー
+     */
+    static class MyViewHolder2 extends RecyclerView.ViewHolder {
+        @InjectView(R.id.userImage)
+        ImageView userImage;
+
+        public MyViewHolder2(View itemView) {
+            super(itemView);
+            ButterKnife.inject(this, itemView);
+        }
+    }
+
+    /**
+     * RecyclerViewのアダプタ（コメントなし）
+     */
+    class NoCommenterAdapter extends RecyclerView.Adapter<MyViewHolder2> {
+
+        final private List<CommentedUser> mData;
+
+        NoCommenterAdapter(List<CommentedUser> data) {
+            mData = data;
+        }
+
+
+        @Override
+        public MyViewHolder2 onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_bookmark_no_commented, viewGroup, false);
+            return new MyViewHolder2(view);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mData.size();
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder2 holder, int position) {
+            CommentedUser user = mData.get(position);
+            if (holder.userImage.getTag() != null) {
+                ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
+                imageContainer.cancelRequest();
+            }
             ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
             holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
         }
