@@ -24,7 +24,7 @@
             android:layout_height="48dp"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
-            android:background="#EEEEEE"
+            android:background="@drawable/toolbar"
             android:gravity="center_vertical"
             android:minHeight="48dp">
 

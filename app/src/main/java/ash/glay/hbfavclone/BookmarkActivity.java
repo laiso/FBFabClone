@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,7 +32,6 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -64,6 +64,8 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
     @InjectView(R.id.action_previous)
     Button mPreviousButton;
+    @InjectView(R.id.action_reload)
+    Button mReloadButton;
     @InjectView(R.id.action_users)
     Button mUsersButton;
     @InjectView(R.id.user_counts)
@@ -101,6 +103,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
                     mUserCounts.setVisibility(View.VISIBLE);
                     mUserCounts.setText("" + comment);
                     mUserCounts.setElevation(10.f);
+                    mCommentListView = new UserCommentListView(context, mBookmarkInfo);
                 }
             }
         }
@@ -110,8 +113,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-
         setContentView(R.layout.activity_bookmark);
 
         mActionBar = getActionBar();
@@ -183,8 +184,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
         mQueue = ((Application) getApplication()).getRequestQueue();
         requestBookmark(initialUrl);
-
-        mCommentListView = new UserCommentListView(this, null, mBookmarkInfo);
 
         IntentFilter filter = new IntentFilter(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
@@ -306,14 +305,14 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     }
 
     private void showUserCommentList() {
-        onUpOrCancelMotionEvent(ScrollState.DOWN);
+        onUpOrCancelMotionEvent(ScrollState.UP);
 
         final FrameLayout container = ButterKnife.findById(this, R.id.container);
         final LinearLayout toolBar = ButterKnife.findById(this, R.id.tool_bar);
-        final ListView listView = mCommentListView.getView();
+        final View listView = mCommentListView.getView();
         listView.setAlpha(0.f);
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.topMargin = Utility.getActionBarHeight(this);
+        params.topMargin = 0;
         params.bottomMargin = toolBar.getHeight();
         listView.setLayoutParams(params);
         container.addView(listView);
@@ -330,16 +329,25 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         PropertyValuesHolder hideCountY = PropertyValuesHolder.ofFloat("scaleY", 1.f, 0.4f);
         ObjectAnimator commentAnimation = ObjectAnimator.ofPropertyValuesHolder(mUserCounts, commentAlpha, hideCountX, hideCountY);
 
+        // ツールバーの色アニメーション
+        TransitionDrawable toolbarBG = (TransitionDrawable) toolBar.getBackground();
+        toolbarBG.startTransition(300);
+
         AnimatorSet set = new AnimatorSet();
         set.playTogether(listAnimator, commentAnimation);
         set.setDuration(300);
         set.setInterpolator(new AccelerateDecelerateInterpolator());
         set.start();
+
+        mPreviousButton.setEnabled(false);
+        mReloadButton.setEnabled(false);
     }
 
     private void hideUserCommentList() {
+        onUpOrCancelMotionEvent(ScrollState.DOWN);
+
         final FrameLayout container = ButterKnife.findById(this, R.id.container);
-        final ListView listView = mCommentListView.getView();
+        final View listView = mCommentListView.getView();
 
         // リストのアニメーション
         PropertyValuesHolder holderAlpha = PropertyValuesHolder.ofFloat("alpha", 1.f, 0.f);
@@ -351,6 +359,11 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         PropertyValuesHolder hideCountX = PropertyValuesHolder.ofFloat("scaleX", 0.4f, 1.0f);
         PropertyValuesHolder hideCountY = PropertyValuesHolder.ofFloat("scaleY", 0.4f, 1.0f);
         ObjectAnimator commentAnimation = ObjectAnimator.ofPropertyValuesHolder(mUserCounts, commentAlpha, hideCountX, hideCountY);
+
+        // ツールバーの色アニメーション
+        final LinearLayout toolBar = ButterKnife.findById(this, R.id.tool_bar);
+        TransitionDrawable toolbarBG = (TransitionDrawable) toolBar.getBackground();
+        toolbarBG.reverseTransition(200);
 
         AnimatorSet set = new AnimatorSet();
         set.playTogether(listAnimator, commentAnimation);
@@ -365,6 +378,8 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
             @Override
             public void onAnimationEnd(Animator animation) {
                 container.removeView(listView);
+                mPreviousButton.setEnabled(mWebView.canGoBack());
+                mReloadButton.setEnabled(true);
             }
 
             @Override

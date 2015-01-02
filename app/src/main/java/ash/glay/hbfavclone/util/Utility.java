@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.text.format.DateFormat;
 import android.util.TypedValue;
 
 import java.io.File;
@@ -14,6 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.Date;
+
+import ash.glay.hbfavclone.R;
 
 /**
  * ユーティリティメソッドを定義するクラス
@@ -123,5 +127,35 @@ public class Utility {
         cache.putBitmap(convertedUrl, dst);
 
         return dst;
+    }
+
+    /**
+     * 時間から日付の文字列表現を得ます
+     *
+     * @param context
+     * @param datetime
+     * @return
+     */
+    public static CharSequence getTimeString(Context context, Date datetime) {
+        long second = (System.currentTimeMillis() - datetime.getTime()) / 1000;
+
+        // 3分以内なら
+        if (second < 60 * 3) {
+            return context.getString(R.string.right_now);
+        }
+        // 1時間以内なら
+        else if (second < 60 * 60) {
+            return context.getString(R.string.minute_ago, Math.round((float) second / 60.f));
+        }
+        // 1日以内なら
+        else if (second < 60 * 60 * 24) {
+            // 23時間30分以上前のとき、「24時間前」が出るのは微妙
+            // あと本家は1日前の情報は「昨日」表記
+            return context.getString(R.string.hour_ago, Math.round((float) second / 3600.f));
+        }
+        // 昨日以前であればフォーマットする
+        else {
+            return DateFormat.format("MM月dd日", datetime);
+        }
     }
 }

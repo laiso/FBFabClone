@@ -20,6 +20,7 @@
         android:layout_marginStart="8dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:gravity="center_vertical"
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"

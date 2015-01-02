@@ -3,7 +3,6 @@ package ash.glay.hbfavclone.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,6 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
-
-import java.util.Date;
 
 import ash.glay.hbfavclone.Application;
 import ash.glay.hbfavclone.R;
@@ -60,7 +57,7 @@ public class FeedAdapter extends CursorAdapter {
             holder.comment.setText("");
         }
         holder.pageTitle.setText(item.title);
-        holder.when.setText(getTimeString(context, item.datetime));
+        holder.when.setText(Utility.getTimeString(context, item.datetime));
 
         if (holder.userImage.getTag() != null) {
             ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
@@ -79,28 +76,6 @@ public class FeedAdapter extends CursorAdapter {
         holder.userImage.setTag(mImageLoader.get(item.favicon_url.toString(), faviconLoader));
     }
 
-    private static CharSequence getTimeString(Context context, Date datetime) {
-        long second = (System.currentTimeMillis() - datetime.getTime()) / 1000;
-
-        // 3分以内なら
-        if (second < 60 * 3) {
-            return context.getString(R.string.right_now);
-        }
-        // 1時間以内なら
-        else if (second < 60 * 60) {
-            return context.getString(R.string.minute_ago, Math.round((float) second / 60.f));
-        }
-        // 1日以内なら
-        else if (second < 60 * 60 * 24) {
-            // 23時間30分以上前のとき、「24時間前」が出るのは微妙
-            // あと本家は1日前の情報は「昨日」表記
-            return context.getString(R.string.hour_ago, Math.round((float) second / 3600.f));
-        }
-        // 昨日以前であればフォーマットする
-        else {
-            return DateFormat.format("MM月dd日", datetime);
-        }
-    }
 
     /**
      * ビューホルダークラス

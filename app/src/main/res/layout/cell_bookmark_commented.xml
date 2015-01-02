@@ -19,7 +19,7 @@
         android:layout_alignTop="@id/userImage"
         android:layout_toEndOf="@id/userImage"
         android:layout_toStartOf="@+id/when"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="8dp"
         android:textSize="12sp"
         android:textColor="?android:textColorPrimaryInverse"
         android:textStyle="bold"/>
@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/userName"
         android:layout_below="@id/userName"
+        android:layout_marginEnd="8dp"
         android:textSize="14sp"
         android:textColor="#262626"/>
 
@@ -41,6 +42,15 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:textSize="14sp"
-        android:textColor="?android:textColorSecondary"/>
+        android:textSize="12sp"
+        android:textColor="#6E6E6E"/>
+
+    <View
+        android:layout_height="1dp"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/userName"
+        android:layout_below="@+id/comment"
+        android:layout_marginTop="8dp"
+        android:background="#CCCCCC"/>
 </RelativeLayout>
