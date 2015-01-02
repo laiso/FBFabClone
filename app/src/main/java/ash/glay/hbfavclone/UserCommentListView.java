@@ -1,6 +1,5 @@
 package ash.glay.hbfavclone;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
+
+import java.util.List;
 
 import ash.glay.hbfavclone.model.BookmarkInfo;
 import ash.glay.hbfavclone.model.CommentedUser;
@@ -26,32 +27,28 @@ import butterknife.InjectView;
  */
 public class UserCommentListView extends Object {
 
+    View mRootView;
     RecyclerView mRecyclerView;
 
-    final private ImageLoader mImageLoader;
-    final private BitmapCache mBitmapCache;
     final private Context mContext;
-
     private BookmarkInfo mBookmarkInfo;
     private UserbookmarkAdapter mAdapter;
 
     public UserCommentListView(Context context, BookmarkInfo bookmarkInfo) {
         mBookmarkInfo = bookmarkInfo;
-        @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(context).inflate(R.layout.listview_usercomment, null);
-        mRecyclerView = ButterKnife.findById(view, R.id.recyler_view);
+        mRootView = LayoutInflater.from(context).inflate(R.layout.listview_usercomment, null);
+        mRecyclerView = ButterKnife.findById(mRootView, R.id.recyler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         mContext = context.getApplicationContext();
-        RequestQueue queue = ((Application) context.getApplicationContext()).getRequestQueue();
-        mBitmapCache = ((Application) context.getApplicationContext()).getBitmapCache();
-        mImageLoader = new ImageLoader(queue, mBitmapCache);
     }
 
     public void destroy() {
         mBookmarkInfo = null;
-        mRecyclerView.setAdapter(null);
-        mRecyclerView = null;
+        if (mRecyclerView != null) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView = null;
+        }
     }
 
     /**
@@ -62,10 +59,11 @@ public class UserCommentListView extends Object {
      */
     public View getView() {
         if (mAdapter == null) {
-            mAdapter = new UserbookmarkAdapter();
+            mAdapter = new UserbookmarkAdapter(mBookmarkInfo.getHasCommentUsers(), mContext);
             mRecyclerView.setAdapter(mAdapter);
         }
-        return mRecyclerView;
+
+        return mRootView;
     }
 
     /**
@@ -90,7 +88,21 @@ public class UserCommentListView extends Object {
     /**
      * RecyclerViewのアダプタ
      */
-    class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    static class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
+
+        final private Context mContext;
+        final private ImageLoader mImageLoader;
+        final private BitmapCache mBitmapCache;
+        final private List<CommentedUser> mData;
+
+        UserbookmarkAdapter(List<CommentedUser> data, Context context) {
+            mContext = context.getApplicationContext();
+            RequestQueue queue = ((Application) mContext.getApplicationContext()).getRequestQueue();
+            mBitmapCache = ((Application) mContext.getApplicationContext()).getBitmapCache();
+            mImageLoader = new ImageLoader(queue, mBitmapCache);
+            mData = data;
+        }
+
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -100,12 +112,12 @@ public class UserCommentListView extends Object {
 
         @Override
         public int getItemCount() {
-            return mBookmarkInfo.getCommentedUserList().size();
+            return mData.size();
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            CommentedUser user = mBookmarkInfo.getCommentedUserList().get(position);
+            CommentedUser user = mData.get(position);
             holder.userName.setText(user.getUser());
             holder.comment.setText(user.getComment());
             holder.when.setText(Utility.getTimeString(mContext, user.timestamp));
@@ -118,9 +130,15 @@ public class UserCommentListView extends Object {
             ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
             holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
         }
+    }
 
-        private String urlFromUserName(String userName) {
-            return "http://www.st-hatena.com/users/" + userName.substring(0, 2) + "/" + userName + "/profile_l.gif";
-        }
+    /**
+     * ユーザーアイコンを取得します
+     *
+     * @param userName
+     * @return
+     */
+    private static String urlFromUserName(String userName) {
+        return "http://www.st-hatena.com/users/" + userName.substring(0, 2) + "/" + userName + "/profile_l.gif";
     }
 }
