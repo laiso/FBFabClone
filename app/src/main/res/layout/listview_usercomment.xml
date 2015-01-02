@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#88000000">
 
     <TextView
         android:id="@+id/header"
@@ -16,7 +17,11 @@
         android:textColor="@color/primary_light"
         android:text="@string/commented_users"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:foreground="?android:windowContentOverlay"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyler_view"
@@ -26,7 +31,11 @@
         android:layout_below="@+id/header"
         android:layout_above="@id/footer"
         android:layout_alignWithParentIfMissing="true"
-        android:background="#EEFFFFFF"/>
+        android:background="#EEFFFFFF"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:foreground="?android:windowContentOverlay"/>
 
     <TextView
         android:id="@+id/footer"
@@ -38,7 +47,10 @@
         android:background="@color/primary"
         android:textColor="@color/primary_light"
         android:text="@string/another_users"
-        android:layout_above="@+id/icon_view"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_above="@+id/icon_view"
+        android:foreground="?android:windowContentOverlay"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/icon_view"
@@ -46,6 +58,10 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:background="#EEFFFFFF"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#EEFFFFFF"
+        android:foreground="?android:windowContentOverlay"/>
 
 </RelativeLayout>
