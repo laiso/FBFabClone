@@ -1,5 +1,9 @@
 package ash.glay.hbfavclone;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -14,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -25,6 +30,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -66,8 +73,10 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     private Animation SHOW_ANIMATION;
 
     private JsonObjectRequest mHBCountRequest;
-
     private RequestQueue mQueue;
+
+    private BookmarkInfo mBookmarkInfo;
+    private UserCommentListView mCommentListView;
 
     /**
      * 情報取得時のローカルキャストレシーバ処理
@@ -76,11 +85,11 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.ACTION_RECEIVE_BOOKMARK_INFO)) {
-                BookmarkInfo info = (BookmarkInfo) intent.getSerializableExtra("data");
+                mBookmarkInfo = (BookmarkInfo) intent.getSerializableExtra("data");
 
                 // ブコメのあるコメント件数取得
                 int comment = 0;
-                for (CommentedUser user : info.commentedUserList) {
+                for (CommentedUser user : mBookmarkInfo.commentedUserList) {
                     if (user.comment.length() != 0) {
                         comment++;
                     }
@@ -99,8 +108,10 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
         setContentView(R.layout.activity_bookmark);
 
         mActionBar = getActionBar();
@@ -173,6 +184,8 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         mQueue = ((Application) getApplication()).getRequestQueue();
         requestBookmark(initialUrl);
 
+        mCommentListView = new UserCommentListView(this, null, mBookmarkInfo);
+
         IntentFilter filter = new IntentFilter(Constants.ACTION_RECEIVE_BOOKMARK_INFO);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
     }
@@ -180,6 +193,7 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     @Override
     protected void onDestroy() {
         mHBCountRequest.cancel();
+        mCommentListView.destroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         //WebViewの解放
         ViewGroup parent = (ViewGroup) mWebView.getParent();
@@ -280,7 +294,89 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
     }
 
     @OnClick(R.id.action_users)
-    public void onActionUsers() {
+    public synchronized void onActionUsers() {
+        if (mUsersButton.isSelected()) {
+            mUsersButton.setSelected(false);
+            hideUserCommentList();
 
+        } else {
+            mUsersButton.setSelected(true);
+            showUserCommentList();
+        }
+    }
+
+    private void showUserCommentList() {
+        onUpOrCancelMotionEvent(ScrollState.DOWN);
+
+        final FrameLayout container = ButterKnife.findById(this, R.id.container);
+        final LinearLayout toolBar = ButterKnife.findById(this, R.id.tool_bar);
+        final ListView listView = mCommentListView.getView();
+        listView.setAlpha(0.f);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.topMargin = Utility.getActionBarHeight(this);
+        params.bottomMargin = toolBar.getHeight();
+        listView.setLayoutParams(params);
+        container.addView(listView);
+        ((View) toolBar.getParent()).bringToFront();
+
+        // リストのアニメーション
+        PropertyValuesHolder holderAlpha = PropertyValuesHolder.ofFloat("alpha", 0.f, 1.f);
+        PropertyValuesHolder holderTranslate = PropertyValuesHolder.ofFloat("translationY", container.getHeight() - toolBar.getHeight(), 0);
+        ObjectAnimator listAnimator = ObjectAnimator.ofPropertyValuesHolder(listView, holderAlpha, holderTranslate);
+
+        // コメント数のアニメーション
+        PropertyValuesHolder commentAlpha = PropertyValuesHolder.ofFloat("alpha", 1.f, 0.f);
+        PropertyValuesHolder hideCountX = PropertyValuesHolder.ofFloat("scaleX", 1.f, 0.4f);
+        PropertyValuesHolder hideCountY = PropertyValuesHolder.ofFloat("scaleY", 1.f, 0.4f);
+        ObjectAnimator commentAnimation = ObjectAnimator.ofPropertyValuesHolder(mUserCounts, commentAlpha, hideCountX, hideCountY);
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(listAnimator, commentAnimation);
+        set.setDuration(300);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+    }
+
+    private void hideUserCommentList() {
+        final FrameLayout container = ButterKnife.findById(this, R.id.container);
+        final ListView listView = mCommentListView.getView();
+
+        // リストのアニメーション
+        PropertyValuesHolder holderAlpha = PropertyValuesHolder.ofFloat("alpha", 1.f, 0.f);
+        PropertyValuesHolder holderTranslate = PropertyValuesHolder.ofFloat("translationY", 0, container.getHeight());
+        ObjectAnimator listAnimator = ObjectAnimator.ofPropertyValuesHolder(listView, holderAlpha, holderTranslate);
+
+        // コメント数のアニメーション
+        PropertyValuesHolder commentAlpha = PropertyValuesHolder.ofFloat("alpha", 0.f, 1.f);
+        PropertyValuesHolder hideCountX = PropertyValuesHolder.ofFloat("scaleX", 0.4f, 1.0f);
+        PropertyValuesHolder hideCountY = PropertyValuesHolder.ofFloat("scaleY", 0.4f, 1.0f);
+        ObjectAnimator commentAnimation = ObjectAnimator.ofPropertyValuesHolder(mUserCounts, commentAlpha, hideCountX, hideCountY);
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(listAnimator, commentAnimation);
+        set.setDuration(200);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                container.removeView(listView);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        set.start();
     }
 }

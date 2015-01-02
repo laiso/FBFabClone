@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/container"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="ash.glay.hbfavclone.BookmarkActivity">
@@ -45,7 +46,7 @@
 
             <Space
                 android:layout_width="0dp"
-                android:layout_height="246dp"
+                android:layout_height="24dp"
                 android:layout_weight="1"/>
 
             <FrameLayout
@@ -74,7 +75,6 @@
                     android:lines="1"/>
             </FrameLayout>
         </LinearLayout>
-
 
     </RelativeLayout>
 </FrameLayout>
