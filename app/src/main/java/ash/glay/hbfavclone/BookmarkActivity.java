@@ -289,7 +289,6 @@ public class BookmarkActivity extends Activity implements ObservableScrollViewCa
         mWebView.reload();
     }
 
-
     @OnClick(R.id.action_previous)
     public void onActionPrevious() {
         mWebView.goBack();

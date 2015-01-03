@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,6 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
-
-import java.util.List;
 
 import ash.glay.hbfavclone.Application;
 import ash.glay.hbfavclone.R;
@@ -31,14 +30,8 @@ import butterknife.InjectView;
 public class UserCommentListView extends Object {
 
     View mRootView;
-    @InjectView(R.id.recyler_view)
+    @InjectView(R.id.recycleView)
     RecyclerView mRecyclerView;
-    @InjectView(R.id.header)
-    TextView mHeader;
-    @InjectView(R.id.footer)
-    TextView mFooter;
-    @InjectView(R.id.icon_view)
-    RecyclerView mOtherUsers;
 
     final private Context mContext;
     final private ImageLoader mImageLoader;
@@ -49,14 +42,11 @@ public class UserCommentListView extends Object {
 
     public UserCommentListView(Context context, BookmarkInfo bookmarkInfo) {
         mBookmarkInfo = bookmarkInfo;
-        mRootView = LayoutInflater.from(context).inflate(R.layout.listview_usercomment, null);
+        mRootView = LayoutInflater.from(context).inflate(R.layout.bookmarks_list_xml, null);
         ButterKnife.inject(this, mRootView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mOtherUsers.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
 
         mContext = context.getApplicationContext();
-
-        mHeader.setText(bookmarkInfo.getHasCommentUsers().size() + " 件のコメント");
 
         mBitmapCache = ((Application) mContext.getApplicationContext()).getBitmapCache();
         RequestQueue queue = ((Application) mContext.getApplicationContext()).getRequestQueue();
@@ -80,24 +70,16 @@ public class UserCommentListView extends Object {
      */
     public View getView() {
         if (mAdapter == null) {
-            mAdapter = new UserbookmarkAdapter(mBookmarkInfo.getHasCommentUsers());
+            mAdapter = new UserbookmarkAdapter(mBookmarkInfo);
             mRecyclerView.setAdapter(mAdapter);
-
-            if (mBookmarkInfo.getNotCommentUsers().size() == 0) {
-                mFooter.setVisibility(View.GONE);
-                mOtherUsers.setVisibility(View.GONE);
-            } else {
-                mOtherUsers.setAdapter(new NoCommenterAdapter(mBookmarkInfo.getNotCommentUsers()));
-            }
         }
-
         return mRootView;
     }
 
     /**
      * ビューホルダー
      */
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class CommentediewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.userImage)
         ImageView userImage;
         @InjectView(R.id.userName)
@@ -107,97 +89,159 @@ public class UserCommentListView extends Object {
         @InjectView(R.id.when)
         TextView when;
 
-        public MyViewHolder(View itemView) {
+        public CommentediewHolder(View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);
         }
     }
 
     /**
-     * RecyclerViewのアダプタ（コメントあり）
+     * ビューホルダー（コメントなし）
      */
-    class UserbookmarkAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    class NoCommentedViewHolder extends RecyclerView.ViewHolder {
+        @InjectView(R.id.icon_view)
+        RecyclerView userImage;
 
-        final private List<CommentedUser> mData;
-
-        UserbookmarkAdapter(List<CommentedUser> data) {
-            mData = data;
-        }
-
-
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_bookmark_commented, viewGroup, false);
-            return new MyViewHolder(view);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData.size();
-        }
-
-        @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            CommentedUser user = mData.get(position);
-            holder.userName.setText(user.getUser());
-            holder.comment.setText(user.getComment());
-            holder.when.setText(Utility.getTimeString(mContext, user.timestamp));
-
-            if (holder.userImage.getTag() != null) {
-                ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
-                imageContainer.cancelRequest();
-            }
-
-            ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
-            holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
+        public NoCommentedViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.inject(this, itemView);
+            userImage.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
         }
     }
 
     /**
-     * ビューホルダー
+     * ビューホルダー（ヘッダ）
      */
-    static class MyViewHolder2 extends RecyclerView.ViewHolder {
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        @InjectView(R.id.header)
+        TextView header;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.inject(this, itemView);
+        }
+    }
+
+    /**
+     * ビューホルダー（コメントなしネスト）
+     */
+    static class NestedNoCommentedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.userImage)
         ImageView userImage;
 
-        public MyViewHolder2(View itemView) {
+        public NestedNoCommentedViewHolder(View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);
         }
     }
 
     /**
-     * RecyclerViewのアダプタ（コメントなし）
+     * RecyclerViewのアダプタ
      */
-    class NoCommenterAdapter extends RecyclerView.Adapter<MyViewHolder2> {
+    class UserbookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        final private List<CommentedUser> mData;
+        final private BookmarkInfo mBookmarkInfo;
 
-        NoCommenterAdapter(List<CommentedUser> data) {
-            mData = data;
-        }
+        private static final int HEADER = 0;
+        private static final int COMMENTED_USER = 1;
+        private static final int NOCOMMENT_USER = 2;
 
-
-        @Override
-        public MyViewHolder2 onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_bookmark_no_commented, viewGroup, false);
-            return new MyViewHolder2(view);
+        UserbookmarkAdapter(BookmarkInfo info) {
+            mBookmarkInfo = info;
         }
 
         @Override
         public int getItemCount() {
-            return mData.size();
+            return mBookmarkInfo.getHasCommentUsers().size() + 3;
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder2 holder, int position) {
-            CommentedUser user = mData.get(position);
-            if (holder.userImage.getTag() != null) {
-                ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
-                imageContainer.cancelRequest();
+        public int getItemViewType(int position) {
+            if (position == 0 || position == mBookmarkInfo.getHasCommentUsers().size() + 1) {
+                Log.i("debug", "position:" + position + "はヘッダ");
+                return HEADER;
+            } else if (position > 0 && position <= mBookmarkInfo.getHasCommentUsers().size() + 1) {
+                Log.i("debug", "position:" + position + "はブクマコメ");
+                return COMMENTED_USER;
+            } else {
+                Log.i("debug", "position:" + position + "はコメなし");
+                return NOCOMMENT_USER;
             }
-            ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
-            holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
+        }
+
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+            switch (viewType) {
+                case HEADER:
+                    return new HeaderViewHolder(inflater.inflate(R.layout.cell_usercomment_header, viewGroup, false));
+                case COMMENTED_USER:
+                    return new CommentediewHolder(inflater.inflate(R.layout.cell_bookmark_commented, viewGroup, false));
+                case NOCOMMENT_USER:
+                    return new NoCommentedViewHolder(inflater.inflate(R.layout.cell_bookmark_no_commented, viewGroup, false));
+            }
+
+            throw new IllegalArgumentException("ありえない状態");
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+            // コメントありユーザー
+            if (getItemViewType(position) == COMMENTED_USER) {
+                CommentedUser user = mBookmarkInfo.getHasCommentUsers().get(position - 1);
+                CommentediewHolder userHolder = (CommentediewHolder) holder;
+                userHolder.userName.setText(user.getUser());
+                userHolder.comment.setText(user.getComment());
+                userHolder.when.setText(Utility.getTimeString(mContext, user.timestamp));
+
+                if (userHolder.userImage.getTag() != null) {
+                    ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) userHolder.userImage.getTag();
+                    imageContainer.cancelRequest();
+                }
+                ImageLoader.ImageListener userImageListener = new UserImageListener(userHolder.userImage, mBitmapCache);
+                userHolder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
+            }
+            // コメントなしユーザー
+            else if (getItemViewType(position) == NOCOMMENT_USER) {
+                NoCommentedViewHolder userHolder = (NoCommentedViewHolder) holder;
+                userHolder.userImage.setAdapter(new NestedUserbookmarkAdapter());
+            }
+            // ヘッダ
+            else if (getItemViewType(position) == HEADER) {
+                HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
+                if (position == 0) {
+                    headerHolder.header.setText(mBookmarkInfo.getHasCommentUsers().size()
+                            + " " + mContext.getResources().getString(R.string.commented_users));
+                } else {
+                    headerHolder.header.setText(mContext.getResources().getString(R.string.another_users));
+                }
+            }
+        }
+
+        class NestedUserbookmarkAdapter extends RecyclerView.Adapter<NestedNoCommentedViewHolder> {
+            @Override
+            public NestedNoCommentedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+                return new NestedNoCommentedViewHolder(inflater.inflate(R.layout.cell_bookmark_no_commented_inner, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(NestedNoCommentedViewHolder holder, int position) {
+                CommentedUser user = mBookmarkInfo.getNotCommentUsers().get(position);
+                if (holder.userImage.getTag() != null) {
+                    ImageLoader.ImageContainer imageContainer = (ImageLoader.ImageContainer) holder.userImage.getTag();
+                    imageContainer.cancelRequest();
+                }
+                ImageLoader.ImageListener userImageListener = new UserImageListener(holder.userImage, mBitmapCache);
+                holder.userImage.setTag(mImageLoader.get(urlFromUserName(user.getUser()), userImageListener));
+            }
+
+            @Override
+            public int getItemCount() {
+                return mBookmarkInfo.getNotCommentUsers().size();
+            }
         }
     }
 
