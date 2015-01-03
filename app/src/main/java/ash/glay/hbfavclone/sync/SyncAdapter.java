@@ -70,10 +70,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * 後で統計取る用
      */
     private void writeLog(String status) {
-        final String fileName = getContext().getFilesDir() + "/log.txt";
+        final Date now = new Date();
+        final String fileName = getContext().getFilesDir() + "/log"+DateFormat.format("_yyyyMMdd", now)+".txt";
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(fileName), true))) {
-            final Date now = new Date();
             writer.println(status + " : " + DateFormat.getLongDateFormat(getContext()).format(now) + " " + DateFormat.getTimeFormat(getContext()).format(now));
         } catch (IOException e) {
             e.printStackTrace();
