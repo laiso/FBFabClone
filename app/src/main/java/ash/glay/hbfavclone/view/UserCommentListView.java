@@ -1,4 +1,4 @@
-package ash.glay.hbfavclone;
+package ash.glay.hbfavclone.view;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +15,8 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
+import ash.glay.hbfavclone.Application;
+import ash.glay.hbfavclone.R;
 import ash.glay.hbfavclone.model.BookmarkInfo;
 import ash.glay.hbfavclone.model.CommentedUser;
 import ash.glay.hbfavclone.util.BitmapCache;

@@ -46,6 +46,7 @@ import ash.glay.hbfavclone.model.CommentedUser;
 import ash.glay.hbfavclone.net.HBCountRequest;
 import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.util.Utility;
+import ash.glay.hbfavclone.view.UserCommentListView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;

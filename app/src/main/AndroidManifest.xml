@@ -61,8 +61,7 @@
                 android:resource="@xml/authenticator"/>
         </service>
 
-        <activity
-            android:name=".BookmarkActivity">
+        <activity android:name=".BookmarkActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FeedActivity"/>
