@@ -158,13 +158,10 @@ public class UserCommentListView extends Object {
         @Override
         public int getItemViewType(int position) {
             if (position == 0 || position == mBookmarkInfo.getHasCommentUsers().size() + 1) {
-                Log.i("debug", "position:" + position + "はヘッダ");
                 return HEADER;
             } else if (position > 0 && position <= mBookmarkInfo.getHasCommentUsers().size() + 1) {
-                Log.i("debug", "position:" + position + "はブクマコメ");
                 return COMMENTED_USER;
             } else {
-                Log.i("debug", "position:" + position + "はコメなし");
                 return NOCOMMENT_USER;
             }
         }
