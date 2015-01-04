@@ -8,15 +8,11 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import ash.glay.hbfavclone.util.Constants;
 import ash.glay.hbfavclone.view.RecentLogFragment;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -86,27 +82,5 @@ public class RecentActivity extends Activity implements ViewPager.OnPageChangeLi
         public int getCount() {
             return mSyncLogList.size();
         }
-    }
-
-
-    /**
-     * ログファイルを読み込みリスト化する
-     *
-     * @return
-     */
-    private List<String> readLogFile() {
-        List<String> logList = new ArrayList<>();
-        File logFile = new File(getFilesDir() + "/" + Constants.LOG_FILE_NAME);
-        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                logList.add(line);
-//                Log.i("info", line);
-            }
-        } catch (IOException e) {
-            for (StackTraceElement stackTrace : e.getStackTrace())
-                logList.add(stackTrace.toString());
-        }
-        return logList;
     }
 }

@@ -88,11 +88,21 @@ public class GraphView extends View {
             int aMinute = c.get(Calendar.MINUTE);
             hours[aHour]++;
 
-            int plot = Math.round((10.f + aHour * 12.5f + aMinute * 0.21f) * density);
+            int plot = Math.round((20.f + aHour * 12.5f + aMinute * 0.20f) * density);
             height = heightFromValue(s.getCount(), true);
-            mPaint.setColor(counter == mSelection ? colorSelected : colorNormal);
+            mPaint.setColor(colorNormal);
             canvas.drawLine(plot, height, plot, 310.f * density, mPaint);
             counter++;
+        }
+        if (mSelection != -1) {
+            c.setTime(mStats.get(mSelection).getDate());
+            int aHour = c.get(Calendar.HOUR_OF_DAY);
+            int aMinute = c.get(Calendar.MINUTE);
+            int plot = Math.round((20.f + aHour * 12.5f + aMinute * 0.20f) * density);
+            height = heightFromValue(mStats.get(mSelection).getCount(), true);
+            mPaint.setColor(colorSelected);
+            mPaint.setStrokeWidth(4.f * density);
+            canvas.drawLine(plot, height, plot, 310.f * density, mPaint);
         }
 
         // 時間当たりの同期試行回数
@@ -138,6 +148,11 @@ public class GraphView extends View {
 
     public int getAnimatevalue() {
         return mAnimateValue;
+    }
+
+    public void setSelectionPoint(int selection) {
+        mSelection = selection;
+        invalidate();
     }
 
     private int heightFromValue(int value, boolean animated) {

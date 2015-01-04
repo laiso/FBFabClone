@@ -16,13 +16,12 @@
         android:layout_alignParentTop="true"/>
 
     <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:background="@color/icons"
         android:layout_marginTop="8dp"
         android:layout_below="@id/graphView"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"/>
-
-
 </RelativeLayout>

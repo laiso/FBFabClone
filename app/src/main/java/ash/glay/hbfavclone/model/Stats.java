@@ -21,4 +21,8 @@ public class Stats {
      * 取得件数（実行結果がfalseのとき必ず0）
      */
     int count;
+    /**
+     * ステータス
+     */
+    String status;
 }
