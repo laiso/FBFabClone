@@ -41,6 +41,8 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
     SwipeRefreshLayout mSwipeRefresh;
     FeedAdapter mAdapter;
 
+    private static final String LIST_VIEW_STATE = "LIST-VIEW-STATE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,20 +53,28 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
         mSwipeRefresh.setOnRefreshListener(this);
         mSwipeRefresh.setColorSchemeResources(R.color.primary, R.color.primary_dark, R.color.accent);
 
-        initAccount();
+        if (!initAccount()) {
+            return;
+        }
+
+        if (savedInstanceState != null) {
+            mListView.onRestoreInstanceState(savedInstanceState.getParcelable(LIST_VIEW_STATE));
+        }
     }
 
-    private void initAccount() {
+    private boolean initAccount() {
         Account account = ((Application) getApplication()).getUser();
         if (account == null) {
             // ユーザーがいないのでログインする必要あり
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, Constants.REQUEST_LOGIN);
+            return false;
         } else {
             ContentResolver.setIsSyncable(account, HBFavFeedContentProvider.AUTHORITY, 1);
             ContentResolver.setSyncAutomatically(account, HBFavFeedContentProvider.AUTHORITY, true);
             ContentResolver.addPeriodicSync(account, HBFavFeedContentProvider.AUTHORITY, new Bundle(), 60 * 60);
             executeManualSync();
+            return true;
         }
     }
 
@@ -87,6 +97,12 @@ public class FeedActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(LIST_VIEW_STATE, mListView.onSaveInstanceState());
     }
 
     @Override
