@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="GraphView">
+        <attr name="animatevalue" format="integer"/>
+        <attr name="selection" format="integer"/>
+    </declare-styleable>
+</resources>
