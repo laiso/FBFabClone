@@ -40,6 +40,7 @@ public class RecentActivity extends Activity implements ViewPager.OnPageChangeLi
         mAdapter = new SyncLogPageAdapter(getFragmentManager(), this);
         mRecentSyncData.setAdapter(mAdapter);
         mRecentSyncData.setOnPageChangeListener(this);
+        mRecentSyncData.setCurrentItem(mAdapter.getCount());
     }
 
     @Override

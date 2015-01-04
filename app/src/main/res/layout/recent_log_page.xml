@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_centerHorizontal="true"
-        app:animatevalue="0"
+        app:animatevalue="100"
         app:selection="-1"
         android:layout_alignParentTop="true"/>
 
