@@ -1,7 +1,7 @@
 FBFabClone
 ==========
 
-FBFavのAndroid版クローンとして作成されました。
+HBFavのAndroid版クローンとして作成されました。
 
 #開発動機
 
